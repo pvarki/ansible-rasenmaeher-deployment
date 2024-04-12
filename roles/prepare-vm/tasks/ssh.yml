@@ -1,5 +1,5 @@
 ---
-- name: Environment | Prepare VM/LXC SSH connections | Check if ssh was installed
+- name: Prepare VM | Prepare ssh | Check if ssh was installed
   apt:
     pkg: openssh-server
     state: latest
@@ -7,5 +7,5 @@
     cache_valid_time: 3600
   notify: restart ssh
 
-- name: Proxmox | Setup PVE root ssh credentials | Reload sshd.service, if changes made
+- name: Prepare VM | Prepare ssh | Reload sshd.service, if changes made
   meta: flush_handlers
