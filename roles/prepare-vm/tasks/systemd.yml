@@ -1,0 +1,5 @@
+---
+- name: Prepare VM | Basic config | When everything is done, make sure systemd does a daemon reload
+  become: yes
+  ansible.builtin.systemd:
+    daemon_reload: yes

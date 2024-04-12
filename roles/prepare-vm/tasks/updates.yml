@@ -1,0 +1,30 @@
+---
+- name: Prepare VM | Basic config | Run apt update
+  become: yes
+  apt:
+    update_cache: yes
+    upgrade: safe
+    autoremove: yes
+
+- name: Prepare VM | Basic config | Installing essential packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+  with_items:
+    - unattended-upgrades
+    - python3
+    - python3-venv
+    - python3-pip
+    - python3-setuptools
+
+#- name: Instances | Basic config | Enable unattended upgrades
+#  become: yes
+#  copy:
+#    src: ./roles/essentials/files/10periodic
+#    dest: /etc/apt/apt.conf.d/10periodic
+#    owner: root
+#    group: root
+#    mode: 0644

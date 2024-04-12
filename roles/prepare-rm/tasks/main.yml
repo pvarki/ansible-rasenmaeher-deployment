@@ -1,0 +1,3 @@
+---
+- include: generate_secrets.yml
+- include: deploy_dockercompose.yml

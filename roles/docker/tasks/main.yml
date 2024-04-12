@@ -1,0 +1,8 @@
+tasks:
+    - name: Prepare VM | Docker | Install Docker and Docker Compose
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - docker
+        - docker-compose
