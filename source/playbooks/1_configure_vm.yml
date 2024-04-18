@@ -1,7 +1,8 @@
 ### to-do link VM preparation playbook
 - name: VM Playbook | Prepare target VM
+  gather_facts: no
   hosts: all
-  become: yes
+  become: true
 
   roles:
     - prepare-vm

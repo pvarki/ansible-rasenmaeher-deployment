@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 source/.vault_pass.txt
 /source/inventory/staging
+source/inventory/hosts.yml

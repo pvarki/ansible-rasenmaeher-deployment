@@ -1,6 +1,6 @@
 ---
-- include: updates.yml
-- include: passwordless_sudo.yml
-- include: hosts.yml
-- include: systemd.yml
-- include: ssh.yml
+- include_tasks: updates.yml
+- include_tasks: passwordless_sudo.yml
+- include_tasks: hosts.yml
+- include_tasks: systemd.yml
+- include_tasks: ssh.yml

@@ -1,4 +1,15 @@
 #!/bin/bash
+
+echo ""
+echo "             __ "
+echo "             \ \ "
+echo "              \ \ "
+echo "               \ \ "
+echo "                \/\ "
+echo "                |   \   _+,_ "
+echo "                 \   (_[____]_ "
+echo "                  \._|.-._.-._] ///////////////////// "
+echo " ^^^^^^Serving^^^^^^^^'-' '-'^the^^Grass^^Cutters^^^^^^^^^^^ "
 echo ""
 echo "______   ___   _____  _____  _   _ ___  ___  ___   _____  _   _  _____ ______ "
 echo "| ___ \ / _ \ /  ___||  ___|| \ | ||  \/  | / _ \ |  ___|| | | ||  ___|| ___ \ "
@@ -16,7 +27,6 @@ echo "                                                                          
 echo "Version: 18 April 2024" 
 echo "" 
 
-
 # Load environment variables
 if [ -f ".env" ]; then
     source .env
@@ -26,59 +36,62 @@ else
 fi
 
 # Set directory based on the stage, defaulting to staging
-if [[ "$ENVIRONMENT_STAGE" == "production" ]]; then
-    DIR="inventory/production"
-else
-    DIR="inventory/staging"
-fi
+INV_DIR="inventory"
+HOST_VARS_DIR="$INV_DIR/host_vars"
+GROUP_VARS_DIR="$INV_DIR/group_vars/${ENVIRONMENT_STAGE:-staging}"
 
 # Ensure directories exist
-mkdir -p $DIR/host_vars
+mkdir -p "$HOST_VARS_DIR" "$GROUP_VARS_DIR"
 
-# Create host_vars file
-cat > $DIR/host_vars/$TARGET_HOSTNAME.yml <<EOF
+# Create host_vars file for host-specific variables
+cat > "$HOST_VARS_DIR/$TARGET_HOSTNAME.yml" <<EOF
 ---
+ansible_ssh_private_key_file: "${TARGET_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE:-''}"
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+ansible_become: true
+ansible_become_method: sudo
+ansible_become_password: "${TARGET_ANSIBLEPASS:-'password'}"
 ansible_host: "${TARGET_ANSIBLE_HOST:-}"
 ansible_distribution: "${TARGET_ANSIBLE_DISTRIBUTION:-'Ubuntu'}"
 hostname: "${TARGET_HOSTNAME:-'default-hostname'}"
 ansible_user: "${TARGET_ANSIBLEUSER:-'ansible'}"
-ansible_pass: "${TARGET_ANSIBLEPASS:-'password'}"
-ansible_ssh_private_key_file: "${TARGET_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE:-''}"
-ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+ansible_password: "${TARGET_ANSIBLEPASS:-'password'}"
 adminuser: "${TARGET_ADMINUSER:-'admin'}"
 adminpwd: "${TARGET_ADMINPASS:-'password'}"
 EOF
 
-# Create or update hosts.ini in the main inventory directory
-cat > inventory/hosts.ini <<EOF
-[all]
-$TARGET_HOSTNAME ansible_host=${TARGET_ANSIBLE_HOST:-'localhost'}
-
-[staging]
-$TARGET_HOSTNAME
-
-[production]
-$TARGET_HOSTNAME
+# Create group_vars file for group-specific variables
+cat > "$GROUP_VARS_DIR/$TARGET_HOSTNAME.yml" <<EOF
+---
 EOF
 
-# Encrypt the host_vars file using Ansible Vault
+# Create or update hosts.yml in the main inventory directory
+cat > "$INV_DIR/hosts.yml" <<EOF
+all:
+  children:
+    ${ENVIRONMENT_STAGE:-staging}:
+      hosts:
+        ${TARGET_HOSTNAME:?'Hostname required'}:
+          ansible_host: ${TARGET_ANSIBLE_HOST:-'localhost'}
+EOF
+
+# Encrypt the host_vars and group_vars files using Ansible Vault
 if [ ! -z "$ANSIBLE_VAULT_PASSWORD" ]; then
     echo "$ANSIBLE_VAULT_PASSWORD" > .vault_pass.txt
     chmod 600 .vault_pass.txt
-    # Define a vault ID for clarity and consistency
     VAULT_ID="default"
-    # Encrypt with specified vault ID
-    ansible-vault encrypt $DIR/host_vars/$TARGET_HOSTNAME.yml --vault-password-file .vault_pass.txt --encrypt-vault-id $VAULT_ID
+    ansible-vault encrypt "$HOST_VARS_DIR/$TARGET_HOSTNAME.yml" --vault-password-file .vault_pass.txt --encrypt-vault-id $VAULT_ID
+    ansible-vault encrypt "$GROUP_VARS_DIR/$TARGET_HOSTNAME.yml" --vault-password-file .vault_pass.txt --encrypt-vault-id $VAULT_ID
     if [ $? -eq 0 ]; then
-        echo "Encrypted host vars for $TARGET_HOSTNAME using Ansible Vault with vault-id $VAULT_ID."
+        echo "Encrypted vars for $TARGET_HOSTNAME using Ansible Vault with vault-id $VAULT_ID."
     else
-        echo "Failed to encrypt the host vars. Check the vault setup."
+        echo "Failed to encrypt vars. Check the vault setup."
         exit 1
     fi
-    # Set up or modify ansible.cfg to use the vault password file
+    # Update ansible.cfg to use the vault password file
     cat > ansible.cfg <<EOF
 [defaults]
-inventory = ./inventory/hosts.ini
+inventory = ./inventory/hosts.yml
 vault_password_file = ./.vault_pass.txt
 host_key_checking = False
 EOF
@@ -87,6 +100,6 @@ else
     echo "Vault password not set. Skipping encryption."
 fi
 
-echo "Inventory for $TARGET_HOSTNAME has been set up in $DIR."
+echo "Inventory for $TARGET_HOSTNAME has been set up in $INV_DIR."
 echo ""
 echo ""

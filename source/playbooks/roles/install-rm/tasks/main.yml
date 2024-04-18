@@ -1,3 +1,3 @@
 ---
-- include: generate_secrets.yml
-- include: deploy_dockercompose.yml
+- include_tasks: generate_secrets.yml
+- include_tasks: deploy_dockercompose.yml
