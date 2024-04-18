@@ -1,0 +1,38 @@
+####################################
+# RM Miniwerk Ansible Env Template #
+####################################
+
+# Vault
+ANSIBLE_VAULT_PASSWORD=myvaultpassword
+
+# Credentials
+TARGET_ANSIBLEUSER=ansibleuser
+TARGET_ANSIBLEPASS=youransiblepassword
+TARGET_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE=$HOME/.ssh/id_rsa
+TARGET_ANSIBLEUSER_SSH_PUBLIC_KEY_FILE=$HOME/.ssh/id_rsa.pub
+
+# Target settings
+ENVIRONMENT_STAGE=staging # If this is 'production', the playbook will use the production settings
+TARGET_HOSTNAME=staging-server
+TARGET_ANSIBLE_HOST=192.168.1.100
+
+# Admin Credentials (For manual SSH connections)
+TARGET_ADMINUSER=admin
+TARGET_ADMINPASS=adminpassword
+
+### RM SECRETS
+# Works like so, that either define these here, or the playbook will generate them..
+KEYCLOAK_DATABASE_PASSWORD=
+RM_DATABASE_PASSWORD=
+TAK_DATABASE_PASSWORD=
+POSTGRES_PASSWORD=
+LDAP_ADMIN_PASSWORD=
+KEYCLOAK_ADMIN_PASSWORD=
+KEYCLOAK_MANAGEMENT_PASSWORD=
+CFSSL_CA_NAME=
+TAKSERVER_CERT_PASS=
+TAK_CA_PASS=
+
+
+
+

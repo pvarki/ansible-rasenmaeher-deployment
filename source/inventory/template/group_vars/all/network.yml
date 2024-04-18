@@ -1,5 +1,0 @@
----
-#### Network vars, define in env
-# Addresses
-hostname_main: "{{ lookup('env', 'TARGET_HOSTNAME', default='') }}"
-fqdn: "{{ lookup('env', 'TARGET_FQDN', default='') }}"

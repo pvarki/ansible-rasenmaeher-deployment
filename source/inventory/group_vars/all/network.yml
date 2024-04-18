@@ -1,0 +1,7 @@
+---
+# Network vars for target host
+hostname_main: []
+fqdn: []
+
+http_port: []
+https_port: []
