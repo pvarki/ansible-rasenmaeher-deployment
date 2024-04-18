@@ -60,6 +60,12 @@ adminuser: "${TARGET_ADMINUSER:-'admin'}"
 adminpwd: "${TARGET_ADMINPASS:-'password'}"
 EOF
 
+# Create host_vars file for the control node needed vars
+cat > "$HOST_VARS_DIR/localhost.yml" <<EOF
+---
+ansible_become_password: "${LOCALHOST_BECOME_PASSWORD:-'password'}"
+EOF
+
 # Create group_vars file for group-specific variables
 cat > "$GROUP_VARS_DIR/$TARGET_HOSTNAME.yml" <<EOF
 ---
@@ -77,11 +83,11 @@ EOF
 
 # Encrypt the host_vars and group_vars files using Ansible Vault
 if [ ! -z "$ANSIBLE_VAULT_PASSWORD" ]; then
-    echo "$ANSIBLE_VAULT_PASSWORD" > .vault_pass.txt
-    chmod 600 .vault_pass.txt
+    echo "$ANSIBLE_VAULT_PASSWORD" > vault_pass.txt
+    chmod 600 vault_pass.txt
     VAULT_ID="default"
-    ansible-vault encrypt "$HOST_VARS_DIR/$TARGET_HOSTNAME.yml" --vault-password-file .vault_pass.txt --encrypt-vault-id $VAULT_ID
-    ansible-vault encrypt "$GROUP_VARS_DIR/$TARGET_HOSTNAME.yml" --vault-password-file .vault_pass.txt --encrypt-vault-id $VAULT_ID
+    ansible-vault encrypt "$HOST_VARS_DIR/$TARGET_HOSTNAME.yml" --vault-password-file vault_pass.txt --encrypt-vault-id $VAULT_ID
+    ansible-vault encrypt "$GROUP_VARS_DIR/$TARGET_HOSTNAME.yml" --vault-password-file vault_pass.txt --encrypt-vault-id $VAULT_ID
     if [ $? -eq 0 ]; then
         echo "Encrypted vars for $TARGET_HOSTNAME using Ansible Vault with vault-id $VAULT_ID."
     else
@@ -92,7 +98,7 @@ if [ ! -z "$ANSIBLE_VAULT_PASSWORD" ]; then
     cat > ansible.cfg <<EOF
 [defaults]
 inventory = ./inventory/hosts.yml
-vault_password_file = ./.vault_pass.txt
+vault_password_file = ./vault_pass.txt
 host_key_checking = False
 EOF
     echo "Updated ansible.cfg with vault password file."
