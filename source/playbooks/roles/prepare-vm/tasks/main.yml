@@ -4,4 +4,3 @@
 - include: hosts.yml
 - include: systemd.yml
 - include: ssh.yml
-- include: add_authorizedkey.yml

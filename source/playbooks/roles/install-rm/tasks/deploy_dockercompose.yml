@@ -1,0 +1,8 @@
+---
+- name: Deploy RM | Deploy Docker Compose project
+  community.general.docker_compose:
+    project_src: "../"
+    state: present
+    pull: yes
+    restarted: yes
+    block:

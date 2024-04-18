@@ -1,0 +1,7 @@
+---
+- name: RM Playbook | Deploy Miniwerk-RM to target
+  hosts: all
+  become: yes
+
+  roles:
+    - install-rm

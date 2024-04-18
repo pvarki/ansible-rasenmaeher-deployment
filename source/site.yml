@@ -1,0 +1,12 @@
+## Main playbook - State which plays you want to run
+## Run using the below command:
+#ansible-playbook site.yml  -vv
+
+### Playbook to deploy the VM on PVE
+# - import_playbook: 0_pve_create_vm.yml
+
+### Playbook to configure target VM
+- import_playbook: playbooks/1_configure_vm.yml
+
+### Playbook to deploy Miniwerk-RM
+- import_playbook: playbooks/2_install_rasenmaeher.yml

@@ -1,6 +1,0 @@
----
-- name: Prepare VM | Add authorized key
-      ansible.builtin.authorized_key:
-        user: "{{ ansible_user }}"
-        state: present
-        key: "{{ lookup('file', user_ssh_key) }}"

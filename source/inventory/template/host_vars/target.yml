@@ -1,0 +1,23 @@
+---
+  ansible_host: "{{ lookup('env', 'TARGET_ANSIBLE_HOST', default='') }}"
+  ansible_distribution: "{{ lookup('env', 'TARGET_ANSIBLE_DISTRIBUTION', default='ubuntu') }}"
+  #enable_custom_shell: yes
+
+  #Host variables
+  hostname: "{{ lookup('env', 'TARGET_HOSTNAME', default='') }}"
+
+  #Ansible user variables. This user is to be used for Ansible connections to the container.
+  #Note: these are created in 01-bootstrap/0104-lxc-preparation role, then with a root/keypair connection
+  #to the host.
+  ansible_user: "{{ lookup('env', 'TARGET_ANSIBLEUSER', default='ansibleuser') }}"
+  ansible_pass: "{{ lookup('env', 'TARGET_ANSIBLEPASS', default='OlenpaHöpsöTestiPassu') }}"
+  ansible_ssh_private_key_file: "{{ lookup('env', 'TARGET_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE', default='') }}"
+  ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+  #Main user variables. This user is to be used for manual SSH connections to the container.
+  adminuser: "{{ lookup('env', 'TARGET_ADMINUSER', default='rasseadmin') }}"
+  adminpwd: ansible_pass: "{{ lookup('env', 'TARGET_ADMINPASS', default='NytÄkkiäpassuvaihda!1337') }}"
+  enable_custom_shell: yes
+
+  target_initial_user: "{{ lookup('env', 'TARGET_INITIAL_USER', default='ubuntu') }}"
+  target_initial_pass: "{{ lookup('env', 'TARGET_INITIAL_PASS', default='ubuntu') }}"
