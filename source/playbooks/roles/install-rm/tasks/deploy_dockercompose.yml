@@ -1,8 +1,61 @@
 ---
-- name: Deploy RM | Deploy Docker Compose project
-  community.general.docker_compose:
-    project_src: "../"
-    state: present
-    pull: yes
-    restarted: yes
-    block:
+    - name: Install RM | Deploy Docker Compose from local repository
+      community.general.docker_compose:
+        project_src: "{{ docker_compose_path }}"
+        state: present
+        pull: yes
+        restarted: yes
+      environment: 
+        KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
+        RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
+        POSTGRES_PASSWORD: "{{ postgres_password }}"
+        LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
+        KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
+        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ keycloak_management_password }}"
+        TAK_DATABASE_PASSWORD: "{{ tak_database_password }}"
+        SERVER_DOMAIN: "{{ server_domain }}"
+        CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
+        MW_LE_EMAIL: "{{ mw_le_email }}"
+        MW_LE_TEST: "{{ mw_le_test }}"  # Can toggle this dynamically as well
+        TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
+        TAK_CA_PASS: "{{ tak_ca_pass }}"
+      when: deployment_source == 'local'
+
+    - name: Install RM | Clone and deploy Docker Compose project from remote repository
+      when: deployment_source == 'remote'
+      block:
+        - name: Install RM | Ensure git is installed (Debian/Ubuntu)
+          ansible.builtin.apt:
+            name: git
+            state: present
+          when: ansible_os_family == "Debian"
+
+        - name: Install RM | Clone Docker Compose project repository
+          ansible.builtin.git:
+            repo: 'https://github.com/pvarki/docker-rasenmaeher-integration'
+            dest: "/opt/project"
+            clone: yes
+            update: yes
+          register: git_clone
+
+        - name: Install RM | Deploy Docker Compose project
+          community.general.docker_compose:
+            project_src: "/opt/project"
+            state: present
+            pull: yes
+            restarted: yes
+          environment: 
+            KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
+            RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
+            POSTGRES_PASSWORD: "{{ postgres_password }}"
+            LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
+            KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
+            KEYCLOAK_MANAGEMENT_PASSWORD: "{{ keycloak_management_password }}"
+            TAK_DATABASE_PASSWORD: "{{ tak_database_password }}"
+            SERVER_DOMAIN: "{{ server_domain }}"
+            CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
+            MW_LE_EMAIL: "{{ mw_le_email }}"
+            MW_LE_TEST: "{{ mw_le_test }}"
+            TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
+            TAK_CA_PASS: "{{ tak_ca_pass }}"
+          when: git_clone.changed

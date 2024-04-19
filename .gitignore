@@ -166,3 +166,6 @@ source/inventory/hosts.yml
 /source/inventory/group_vars
 source/inventory/group_vars/staging/staging-server.yml
 source/vault_pass.txt
+source/inventory/host_vars/staging-server.yml
+/source/inventory/group_vars
+/source/inventory

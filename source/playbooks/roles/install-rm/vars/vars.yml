@@ -6,7 +6,6 @@ secrets: {
   "ldap_admin_password": "{{ ldap_admin_password | default('') }}",
   "keycloak_admin_password": "{{ keycloak_admin_password | default('') }}",
   "keycloak_management_password": "{{ keycloak_management_password | default('') }}",
-  "cfssl_ca_name": "{{ cfssl_ca_name | default('') }}",
   "takserver_cert_pass": "{{ takserver_cert_pass | default('') }}",
   "tak_ca_pass": "{{ tak_ca_pass | default('') }}"
 }

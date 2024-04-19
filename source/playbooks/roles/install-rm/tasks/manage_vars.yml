@@ -14,37 +14,36 @@
   ansible.builtin.file:
     path: "../inventory/host_vars/{{ inventory_hostname }}/"
     state: directory
-    mode: '0755'
-  delegate_to: localhost  # Executes this task on the control node
+  delegate_to: localhost
 
-- name: Write secrets to file on the control node
+- name: Write vars to file on the control node
   copy:
     content: |
-      keycloak_db_password: "{{ keycloak_db_password }}"
       rasenmaeher_db_password: "{{ rasenmaeher_db_password }}"
-      tak_db_password: "{{ tak_db_password }}"
       postgres_password: "{{ postgres_password }}"
       ldap_admin_password: "{{ ldap_admin_password }}"
       keycloak_admin_password: "{{ keycloak_admin_password }}"
       keycloak_management_password: "{{ keycloak_management_password }}"
-      cfssl_ca_name: "{{ cfssl_ca_name }}"
       takserver_cert_pass: "{{ takserver_cert_pass }}"
+      tak_db_password: "{{ tak_db_password }}"
       tak_ca_pass: "{{ tak_ca_pass }}"
+      server_domain: "{{ server_domain | default('localmaeher.pvarki.fi') }}"
+      cfssl_ca_name: "{{ cfssl_ca_name | default('localmaeher') }}"
+      mw_le_email: "{{ mw_le_email | default('example@example.com') }}"
+      mw_le_test: "{{ mw_le_test | default('true') }}"
+      deployment_source: "{{ deployment_source | default('remote') }}"
     dest: "../inventory/host_vars/{{ inventory_hostname }}/rasenmaeher_secrets.yml"
-    mode: '0644'
   delegate_to: localhost
 
-- name: debugg
-  ansible.builtin.command:
-    cmd: "ls ../"
-  delegate_to: localhost
+- name: Debug deployment_source
+  debug:
+    var: deployment_source
 
 - name: Encrypt secrets file with Ansible Vault on the control node
   become: yes
   ansible.builtin.command:
     cmd: "ansible-vault encrypt '../inventory/host_vars/{{ inventory_hostname }}/rasenmaeher_secrets.yml' --vault-password-file ../vault_pass.txt"
   delegate_to: localhost 
-  when: ansible_vault_password is defined
   register: vault_encryption_result
   ignore_errors: true  # Optionally add this to not fail the playbook and examine the output
 

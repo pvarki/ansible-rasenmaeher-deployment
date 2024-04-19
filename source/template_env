@@ -15,6 +15,9 @@ TARGET_ANSIBLEUSER_SSH_PUBLIC_KEY_FILE=$HOME/.ssh/id_rsa.pub
 ENVIRONMENT_STAGE=staging # If this is 'production', the playbook will use the production settings
 TARGET_HOSTNAME=staging-server
 TARGET_ANSIBLE_HOST=192.168.1.100
+# Do you want to deploy Rasenmaeher from your local control node or the Github repo?
+# Options: 'local' or 'remote'
+DEPLOYMENT_SOURCE="remote" 
 
 # Localhost vars
 LOCALHOST_BECOME_PASSWORD=
@@ -23,16 +26,19 @@ LOCALHOST_BECOME_PASSWORD=
 TARGET_ADMINUSER=admin
 TARGET_ADMINPASS=adminpassword
 
-### RM SECRETS
-# Works like so, that either define these here, or the playbook will generate them..
+### RM VARS
+# Works like so, that either define these here, or the playbook will generate them.
 KEYCLOAK_DATABASE_PASSWORD=
 RM_DATABASE_PASSWORD=
-TAK_DATABASE_PASSWORD=
 POSTGRES_PASSWORD=
 LDAP_ADMIN_PASSWORD=
 KEYCLOAK_ADMIN_PASSWORD=
 KEYCLOAK_MANAGEMENT_PASSWORD=
-CFSSL_CA_NAME=
+TAK_DATABASE_PASSWORD=
+SERVER_DOMAIN="localmaeher.pvarki.fi"
+CFSSL_CA_NAME="localmaeher"
+MW_LE_EMAIL="example@example.com"
+MW_LE_TEST="true"  # switch to false when you are ready for production
 TAKSERVER_CERT_PASS=
 TAK_CA_PASS=
 

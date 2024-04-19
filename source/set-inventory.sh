@@ -9,7 +9,7 @@ echo "                \/\ "
 echo "                |   \   _+,_ "
 echo "                 \   (_[____]_ "
 echo "                  \._|.-._.-._] ///////////////////// "
-echo " ^^^^^^Serving^^^^^^^^'-' '-'^the^^Grass^^Cutters^^^^^^^^^^^ "
+echo " ^^^^^^Serving^^^^^^^^'-' '-'^Those^Close^To^Grass^^^ "
 echo ""
 echo "______   ___   _____  _____  _   _ ___  ___  ___   _____  _   _  _____ ______ "
 echo "| ___ \ / _ \ /  ___||  ___|| \ | ||  \/  | / _ \ |  ___|| | | ||  ___|| ___ \ "
@@ -28,6 +28,7 @@ echo "Version: 18 April 2024"
 echo "" 
 
 # Load environment variables
+# Load environment variables
 if [ -f ".env" ]; then
     source .env
 else
@@ -38,13 +39,18 @@ fi
 # Set directory based on the stage, defaulting to staging
 INV_DIR="inventory"
 HOST_VARS_DIR="$INV_DIR/host_vars"
+TARGET_HOST_VARS_DIR="$INV_DIR/host_vars/$TARGET_HOSTNAME"
 GROUP_VARS_DIR="$INV_DIR/group_vars/${ENVIRONMENT_STAGE:-staging}"
 
 # Ensure directories exist
-mkdir -p "$HOST_VARS_DIR" "$GROUP_VARS_DIR"
+mkdir -p "$HOST_VARS_DIR" "$GROUP_VARS_DIR" "$TARGET_HOST_VARS_DIR"
 
-# Create host_vars file for host-specific variables
-cat > "$HOST_VARS_DIR/$TARGET_HOSTNAME.yml" <<EOF
+# Define the deployment source and Docker Compose project path for local deployment
+DEPLOYMENT_SOURCE="${DEPLOYMENT_SOURCE:-local}"  # default to local if not set
+DOCKER_COMPOSE_PATH="${PWD}/docker-rasenmaeher-integration"  # Adjust the path as necessary
+
+# Write environment variables to a host_vars file
+cat > "$HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml" <<EOF
 ---
 ansible_ssh_private_key_file: "${TARGET_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE:-''}"
 ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
@@ -58,8 +64,9 @@ ansible_user: "${TARGET_ANSIBLEUSER:-'ansible'}"
 ansible_password: "${TARGET_ANSIBLEPASS:-'password'}"
 adminuser: "${TARGET_ADMINUSER:-'admin'}"
 adminpwd: "${TARGET_ADMINPASS:-'password'}"
+deployment_source: "$DEPLOYMENT_SOURCE"
+docker_compose_path: "$DOCKER_COMPOSE_PATH"
 EOF
-
 # Create host_vars file for the control node needed vars
 cat > "$HOST_VARS_DIR/localhost.yml" <<EOF
 ---
@@ -86,8 +93,7 @@ if [ ! -z "$ANSIBLE_VAULT_PASSWORD" ]; then
     echo "$ANSIBLE_VAULT_PASSWORD" > vault_pass.txt
     chmod 600 vault_pass.txt
     VAULT_ID="default"
-    ansible-vault encrypt "$HOST_VARS_DIR/$TARGET_HOSTNAME.yml" --vault-password-file vault_pass.txt --encrypt-vault-id $VAULT_ID
-    ansible-vault encrypt "$GROUP_VARS_DIR/$TARGET_HOSTNAME.yml" --vault-password-file vault_pass.txt --encrypt-vault-id $VAULT_ID
+    ansible-vault encrypt "$HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml" --vault-password-file vault_pass.txt --encrypt-vault-id $VAULT_ID
     if [ $? -eq 0 ]; then
         echo "Encrypted vars for $TARGET_HOSTNAME using Ansible Vault with vault-id $VAULT_ID."
     else
