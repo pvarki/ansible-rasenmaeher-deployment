@@ -3,11 +3,11 @@
 ####################################
 
 # Vault
-ANSIBLE_VAULT_PASSWORD=myvaultpassword
+ANSIBLE_VAULT_PASSWORD=myvaultpassword # pragma: allowlist secret
 
 # Credentials
-TARGET_ANSIBLEUSER=ansibleuser
-TARGET_ANSIBLEPASS=youransiblepassword
+TARGET_ANSIBLEUSER=ansibleuser # pragma: allowlist secret
+TARGET_ANSIBLEPASS=youransiblepassword # pragma: allowlist secret
 TARGET_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE=$HOME/.ssh/id_rsa
 TARGET_ANSIBLEUSER_SSH_PUBLIC_KEY_FILE=$HOME/.ssh/id_rsa.pub
 
@@ -17,7 +17,7 @@ TARGET_HOSTNAME=staging-server
 TARGET_ANSIBLE_HOST=192.168.1.100
 # Do you want to deploy Rasenmaeher from your local control node or the Github repo?
 # Options: 'local' or 'remote'
-DEPLOYMENT_SOURCE="remote" 
+DEPLOYMENT_SOURCE="remote"
 
 # Localhost vars
 LOCALHOST_BECOME_PASSWORD=
@@ -41,7 +41,3 @@ MW_LE_EMAIL="example@example.com"
 MW_LE_TEST="true"  # switch to false when you are ready for production
 TAKSERVER_CERT_PASS=
 TAK_CA_PASS=
-
-
-
-

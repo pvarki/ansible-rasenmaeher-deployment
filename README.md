@@ -4,7 +4,7 @@ Ansible playbook to deploy Rasenmaeher via Miniwerk to a virtual machine.
 Target: This playbook lets you create and manage RM instances under ProxmoxVE at will.
 
 # How to Run
-Define your variables: addresses and secrets, to an .env. Template provided. Run set-inventory.sh to create a hostfile.yml according what you want to build. 
+Define your variables: addresses and secrets, to an .env. Template provided. Run set-inventory.sh to create a hostfile.yml according what you want to build.
 
 1. Define variables to your .env. Copy-paste the template provided.
 2. $ bash set-inventory.sh - create a staging host to /inventory/staging & load up .env

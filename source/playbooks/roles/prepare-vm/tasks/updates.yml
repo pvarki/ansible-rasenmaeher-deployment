@@ -19,7 +19,6 @@
     - python3-venv
     - python3-pip
     - python3-setuptools
-
 #- name: Instances | Basic config | Enable unattended upgrades
 #  become: yes
 #  copy:

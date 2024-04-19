@@ -6,6 +6,6 @@
     update_cache: true
     cache_valid_time: 3600
   notify: restart ssh
-    
+
 - name: Prepare VM | Prepare ssh | Reload sshd.service, if changes made
   meta: flush_handlers

@@ -40,11 +40,11 @@
     var: deployment_source
 
 - name: Encrypt secrets file with Ansible Vault on the control node
-  become: yes
   ansible.builtin.command:
     cmd: "ansible-vault encrypt '../inventory/host_vars/{{ inventory_hostname }}/rasenmaeher_secrets.yml' --vault-password-file ../vault_pass.txt"
-  delegate_to: localhost 
+  delegate_to: localhost
   register: vault_encryption_result
+  become: no
   ignore_errors: true  # Optionally add this to not fail the playbook and examine the output
 
 - name: Debug vault encryption result

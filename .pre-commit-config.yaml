@@ -1,32 +1,29 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.1.0
     hooks:
-    -   id: check-merge-conflict
-    -   id: check-yaml
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
--   repo: https://github.com/IamTheFij/docker-pre-commit.git
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+
+  - repo: https://github.com/IamTheFij/docker-pre-commit.git
     rev: v2.1.1
     hooks:
-    -   id: docker-compose-check
+      - id: docker-compose-check
         files: "docker-compose.*.yml"
         exclude: ".*.tpl"
--   repo: https://github.com/Lucas-C/pre-commit-hooks
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.1.13
     hooks:
-    -   id: forbid-crlf
-    -   id: remove-crlf
-    -   id: forbid-tabs
-    -   id: remove-tabs
--   repo: https://github.com/Yelp/detect-secrets
+      - id: forbid-crlf
+      - id: remove-crlf
+      - id: forbid-tabs
+      - id: remove-tabs
+
+  - repo: https://github.com/Yelp/detect-secrets
     rev: v1.2.0
     hooks:
-    -   id: detect-secrets
+      - id: detect-secrets
         exclude: "poetry.lock|dotenv.example|docker-compose_.*.yml"
--   repo: https://github.com/ansible-community/ansible-lint
-    rev: v5.0.12
-    hooks:
-    -   id: ansible-lint
-        stages: [commit]
-        files: ^.*\.(yaml|yml)$

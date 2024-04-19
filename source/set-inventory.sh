@@ -24,8 +24,8 @@ echo "| | | || |\  |/\__/ / _| |_ | |_/ /| |____| |___                          
 echo "\_| |_/\_| \_/\____/  \___/ \____/ \_____/\____/                              "
 echo "                                                                              "
 echo "                                                                             "
-echo "Version: 18 April 2024" 
-echo "" 
+echo "Version: 18 April 2024"
+echo ""
 
 # Load environment variables
 # Load environment variables

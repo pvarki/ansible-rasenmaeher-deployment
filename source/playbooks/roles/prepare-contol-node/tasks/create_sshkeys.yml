@@ -1,13 +1,12 @@
 ---
-
 - name: Localhost | Prepare local playbook to manage the server | Check if there are ansible keys preseent
   stat:
-    path: '{{ ansibleuser_ssh_private_key_file }}'
+    path: "{{ ansibleuser_ssh_private_key_file }}"
   register: ansibleuserkey_preserence
 
 - name: Localhost | Prepare local playbook to manage the server | Check if there are ansible keys preseent
   stat:
-    path: '{{ sysadmin_ssh_private_key_file }}'
+    path: "{{ sysadmin_ssh_private_key_file }}"
   register: sysadminkey_preserence
 
 - name: Localhost | Prepare local playbook to manage the server | Create target Ansible user ssh pair
@@ -29,10 +28,8 @@
     size: 2048
     comment: "{{ lxc_sysadmin }}@{{ hostname_main }}"
   when: not sysadminkey_preserence.stat.exists
-
 #- name: Make sure .ssh directory permissions are all right
 #  become: yes
 #  file:
 #    path: '{{ ssh_folder }}'
 #    mode: 700
- 

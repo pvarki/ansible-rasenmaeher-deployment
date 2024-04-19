@@ -2,9 +2,6 @@
 ## Run using the below command:
 #ansible-playbook site.yml  -vv
 
-### Playbook to deploy the VM on PVE
-# - import_playbook: 0_pve_create_vm.yml
-
 ### Playbook to configure target VM
 #- import_playbook: playbooks/1_configure_vm.yml
 

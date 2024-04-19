@@ -1,5 +1,6 @@
 {
-    "yaml.schemas": {
-        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/tasks": "file:///Users/bg/PVARKI-projekti/esitesivu/ansible-rasenmaeher-deployment/roles/prepare-rm/tasks/generate_secrets.yml"
-    }
+  "yaml.schemas":
+    {
+      "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/tasks": "file:///Users/bg/PVARKI-projekti/esitesivu/ansible-rasenmaeher-deployment/roles/prepare-rm/tasks/generate_secrets.yml",
+    },
 }
