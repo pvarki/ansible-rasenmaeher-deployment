@@ -29,8 +29,11 @@ TARGET_ADMINPASS=adminpassword
 ## RM CI VARS
 # Which version to deploy?
 DOCKER_REPO_TAG=
-# Where the integration repo lies now?
+# Where the integration repo lies now in the Internet?
 DOCKER_COMPOSITION_REPO=
+# Where the integration repo lies now in control node, if you want to deliver it
+# from your local machine?
+DOCKERCOMPOSE_LOCAL_LOCATION=
 
 ### RM VARS
 # Works like so, that either define these here, or the playbook will generate them.
