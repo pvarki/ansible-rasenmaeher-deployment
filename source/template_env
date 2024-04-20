@@ -26,6 +26,12 @@ LOCALHOST_BECOME_PASSWORD=
 TARGET_ADMINUSER=admin
 TARGET_ADMINPASS=adminpassword
 
+## RM CI VARS
+# Which version to deploy?
+DOCKER_REPO_TAG=
+# Where the integration repo lies now?
+DOCKER_COMPOSITION_REPO=
+
 ### RM VARS
 # Works like so, that either define these here, or the playbook will generate them.
 KEYCLOAK_DATABASE_PASSWORD=
@@ -34,6 +40,7 @@ POSTGRES_PASSWORD=
 LDAP_ADMIN_PASSWORD=
 KEYCLOAK_ADMIN_PASSWORD=
 KEYCLOAK_MANAGEMENT_PASSWORD=
+KEYCLOAK_DATABASE_PASSWORD=
 TAK_DATABASE_PASSWORD=
 SERVER_DOMAIN="localmaeher.pvarki.fi"
 CFSSL_CA_NAME="localmaeher"

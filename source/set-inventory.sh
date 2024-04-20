@@ -66,6 +66,9 @@ adminuser: "${TARGET_ADMINUSER:-'admin'}"
 adminpwd: "${TARGET_ADMINPASS:-'password'}"
 deployment_source: "$DEPLOYMENT_SOURCE"
 docker_compose_path: "$DOCKER_COMPOSE_PATH"
+docker_repo_tag: "${DOCKER_REPO_TAG:-'main'}"
+docker_composition_repo: "${DOCKER_COMPOSITION_REPO:-https://github.com/pvarki/docker-rasenmaeher-integration.git}"
+
 EOF
 # Create host_vars file for the control node needed vars
 cat > "$HOST_VARS_DIR/localhost.yml" <<EOF

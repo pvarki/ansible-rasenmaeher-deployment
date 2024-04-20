@@ -19,13 +19,14 @@
 - name: Write vars to file on the control node
   copy:
     content: |
-      rasenmaeher_db_password: "{{ rasenmaeher_db_password }}"
+      rm_database_password: "{{ rm_database_password }}"
       postgres_password: "{{ postgres_password }}"
       ldap_admin_password: "{{ ldap_admin_password }}"
       keycloak_admin_password: "{{ keycloak_admin_password }}"
       keycloak_management_password: "{{ keycloak_management_password }}"
+      keycloak_database_password: "{{ keycloak_database_password }}"
       takserver_cert_pass: "{{ takserver_cert_pass }}"
-      tak_db_password: "{{ tak_db_password }}"
+      tak_database_password_password: "{{ tak_database_password }}"
       tak_ca_pass: "{{ tak_ca_pass }}"
       server_domain: "{{ server_domain | default('localmaeher.pvarki.fi') }}"
       cfssl_ca_name: "{{ cfssl_ca_name | default('localmaeher') }}"
