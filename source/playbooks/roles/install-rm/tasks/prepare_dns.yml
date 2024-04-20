@@ -1,0 +1,21 @@
+---
+- name: Deploy RM | Update DNS A records, if applicable
+  ansible.builtin.uri:
+    url: "{{ dns_provider_url }}/domains/{{ dns_zone_name }}/records/A/{{ item.name }}"
+    method: PUT
+    body_format: json
+    body:
+      ttl: 300
+      value: "{{ target_ip_address }}"
+    headers:
+      Authorization: "Bearer {{ dns_api_token }}"
+    status_code: 200
+    validate_certs: yes
+  loop:
+        - { name: "{{ deployment_name }}", ttl: 300 }
+        - { name: "mtls.{{ deployment_name }}", ttl: 300 }
+        - { name: "tak.{{ deployment_name }}", ttl: 300 }
+        - { name: "mtls.tak.{{ deployment_name }}", ttl: 300 }
+        - { name: "fake.{{ deployment_name }}", ttl: 300 }
+        - { name: "mtls.fake.{{ deployment_name }}", ttl: 300 }
+  when: dns_wanted is true

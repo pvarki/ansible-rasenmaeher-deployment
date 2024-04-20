@@ -69,8 +69,13 @@ dockercompose_local_location: "$DOCKERCOMPOSE_LOCAL_LOCATION"
 docker_compose_path: "$DOCKER_COMPOSE_PATH"
 docker_repo_tag: "${DOCKER_REPO_TAG:-'main'}"
 docker_composition_repo: "${DOCKER_COMPOSITION_REPO:-https://github.com/pvarki/docker-rasenmaeher-integration.git}"
-
+dns_wanted: "${DO_YOU_WANT_TO_USE_DNS}"
+dns_zone_name: "${DNS_ZONE_NAME:-'pvarki.fi'}"
+dns_record_name: "${DNS_RECORD_NAME:-$TARGET_HOSTNAME.pvarki.fi}"
+dns_provider_url: "${DNS_PROVIDER_URL}"
+dns_api_token: "${DNS_API_TOKEN}"
 EOF
+
 # Create host_vars file for the control node needed vars
 cat > "$HOST_VARS_DIR/localhost.yml" <<EOF
 ---

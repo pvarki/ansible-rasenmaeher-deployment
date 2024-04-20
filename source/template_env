@@ -19,6 +19,13 @@ TARGET_ANSIBLE_HOST=192.168.1.100
 # Options: 'local' or 'remote'
 DEPLOYMENT_SOURCE="remote"
 
+# DNS Configuration
+DO_YOU_WANT_TO_USE_DNS=false
+DNS_ZONE_NAME="pvarki.fi"
+DNS_RECORD_NAME="{{ TARGET_HOSTNAME }}.{{ DNS_ZONE_NAME }}"
+DNS_PROVIDER_URL="https://api.mydnsprovider.com/v1"
+DNS_API_TOKEN=yourdnsapitoken # pragma: allowlist secret
+
 # Localhost vars
 LOCALHOST_BECOME_PASSWORD=
 
