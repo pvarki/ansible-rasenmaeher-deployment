@@ -1,12 +1,12 @@
 ---
-    - name: Debug dockercompose_local_location
+    - name: Deploy RM | Debug dockercompose_local_location
       debug:
         msg: "The path is {{ dockercompose_local_location }}"
 
-    - name: Deploy Docker Compose from local source
+    - name: Deploy RM | Deploy Docker Compose from local source
       when: deployment_source == 'local'
       block:
-        - name: Synchronize Docker Compose project directory from control node
+        - name: Deploy RM | Synchronize Docker Compose project directory from control node
           ansible.builtin.synchronize:
             src: "{{ dockercompose_local_location }}/"
             dest: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
@@ -16,12 +16,11 @@
           delegate_to: localhost
           become: true
 
-        - name: Deploy Docker Compose project from local configuration
-          community.general.docker_compose:
-            project_src: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
-            state: present
-            pull: yes
-            restarted: yes
+        - name: Deploy RM | Start Docker Compose in detached mode and log output
+          ansible.builtin.shell:
+            cmd: |
+              docker-compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1
+            chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
           environment:
             KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
             RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
@@ -37,8 +36,20 @@
             TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
             TAK_CA_PASS: "{{ tak_ca_pass }}"
           become: no
+          async: 900
+          poll: 0
+          register: compose_background
 
-    - name: Deploy Docker Compose from remote repository
+        - name: Deploy RM | Tail the Docker Compose log file for real-time output
+          ansible.builtin.shell:
+            cmd: tail -f /home/{{ ansible_user }}/compose_output.log
+          async: 900
+          poll: 15
+          until: compose_background.finished
+          ignore_errors: yes
+
+
+    - name: Deploy RM | Deploy Docker Compose from remote repository
       when: deployment_source == 'remote'
       block:
         - name: Ensure git is installed (Debian/Ubuntu)
@@ -47,7 +58,7 @@
             state: present
           when: ansible_os_family == "Debian"
 
-        - name: Clone Docker Compose project repository
+        - name: Deploy RM | Clone Docker Compose project repository
           ansible.builtin.git:
             repo: "{{ docker_composition_repo }}"
             dest: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
@@ -56,18 +67,17 @@
             clone: yes
             update: no  # Do not update submodules yet
 
-        - name: Switch .gitmodules ssh repos to https
+        - name: Deploy RM | Switch .gitmodules ssh repos to https
           ansible.builtin.replace:
             path: "/home/{{ ansible_user }}/docker-rasenmaeher-integration/.gitmodules"
             regexp: 'git@github.com:'
             replace: 'https://github.com:'
 
-        - name: Deploy Docker Compose project from remote source
-          community.general.docker_compose:
-            project_src: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
-            state: present
-            pull: yes
-            restarted: yes
+        - name: Deploy RM | Start Docker Compose in detached mode and log output
+          ansible.builtin.shell:
+            cmd: |
+              docker-compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1
+            chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
           environment:
             KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
             RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
@@ -83,3 +93,14 @@
             TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
             TAK_CA_PASS: "{{ tak_ca_pass }}"
           become: no
+          async: 900
+          poll: 0
+          register: compose_background
+
+        - name: Deploy RM | Tail the Docker Compose log file for real-time output
+          ansible.builtin.shell:
+            cmd: tail -f /home/{{ ansible_user }}/compose_output.log
+          async: 900
+          poll: 15
+          until: compose_background.finished
+          ignore_errors: yes
