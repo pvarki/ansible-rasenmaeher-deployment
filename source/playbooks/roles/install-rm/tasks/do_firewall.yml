@@ -1,3 +1,15 @@
+- name: Deploy RM | Install firewalld
+  ansible.builtin.apt:
+    name: firewalld
+    state: present
+  become: true
+
+- name: Deploy RM | Install Python library for firewalld
+  ansible.builtin.apt:
+    name: python3-firewall
+    state: present
+  become: true
+
 - name: Deploy RM | Allow SSH
   ansible.posix.firewalld:
     service: ssh
