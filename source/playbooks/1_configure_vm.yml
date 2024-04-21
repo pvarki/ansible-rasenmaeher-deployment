@@ -1,9 +1,9 @@
 ### to-do link VM preparation playbook
 - name: VM Playbook | Prepare target VM
-  gather_facts: no
+  gather_facts: yes
   hosts: all
   become: true
 
   roles:
     - prepare-vm
-    - docker
+    - geerlingguy.docker

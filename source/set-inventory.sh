@@ -27,7 +27,10 @@ echo "                                                                          
 echo "Version: 18 April 2024"
 echo ""
 
-# Load environment variables
+echo "Installing ansible-galaxy roles..."
+ansible-galaxy install -r requirements.yml
+echo "Required roles installed."
+
 # Load environment variables
 if [ -f ".env" ]; then
     source .env
@@ -35,6 +38,7 @@ else
     echo "Error: .env file not found."
     exit 1
 fi
+echo "Env vars loaded."
 
 # Set directory based on the stage, defaulting to staging
 INV_DIR="inventory"
@@ -96,6 +100,8 @@ all:
         ${TARGET_HOSTNAME:?'Hostname required'}:
           ansible_host: ${TARGET_ANSIBLE_HOST:-'localhost'}
 EOF
+
+echo "Written vars from environment."
 
 # Encrypt the host_vars and group_vars files using Ansible Vault
 if [ ! -z "$ANSIBLE_VAULT_PASSWORD" ]; then

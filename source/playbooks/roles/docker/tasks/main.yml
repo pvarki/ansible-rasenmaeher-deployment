@@ -1,7 +1,34 @@
-- name: Prepare VM | Docker | Install Docker and Docker Compose
+- name: Prepare VM | Docker | Install Docker
   ansible.builtin.package:
-    name: "{{ item }}"
+    name: docker
     state: latest
-  loop:
-    - docker
-    - docker-compose
+
+- name: Ensure Docker CLI plugins directory exists
+  ansible.builtin.file:
+    path: /usr/local/lib/docker/cli-plugins
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Check if Docker Compose v2 is already installed
+  ansible.builtin.command: docker compose version
+  register: docker_compose_installed
+  failed_when: docker_compose_installed.rc != 0 and 'is not a docker command' not in docker_compose_installed.stderr
+  ignore_errors: True
+
+- name: Download and install Docker Compose v2
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-{{ ansible_system | lower }}-{{ 'x86_64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+    dest: "/usr/local/lib/docker/cli-plugins/docker-compose"
+    mode: 'u+x,g+x'
+  when: docker_compose_installed.failed
+
+- name: Verify Docker Compose installation
+  ansible.builtin.command: docker compose version
+  register: verification
+  changed_when: False
+
+- name: Display Docker Compose version
+  ansible.builtin.debug:
+    msg: "{{ verification.stdout }}"
