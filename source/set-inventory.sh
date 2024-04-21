@@ -129,4 +129,4 @@ fi
 
 echo "Inventory for $TARGET_HOSTNAME has been set up in $INV_DIR."
 echo ""
-echo ""
+echo "Ready."

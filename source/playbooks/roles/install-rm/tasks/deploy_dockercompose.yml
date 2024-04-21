@@ -57,7 +57,7 @@
 - name: Deploy RM | Start Docker Compose in detached mode and log output
   ansible.builtin.shell:
     cmd: |
-      docker-compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml up > /home/{{ ansible_user }}/compose_output.log 2>&1
+      docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml up > /home/{{ ansible_user }}/compose_output.log 2>&1
     chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
   environment:
     KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
@@ -118,14 +118,14 @@
     - name: Deploy RM | Pull Docker Compose images
       ansible.builtin.shell:
         cmd: |
-          docker-compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml pull
+          docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml pull
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       become: false
 
     - name: Deploy RM | Start Docker Compose in detached mode and log output
       ansible.builtin.shell:
         cmd: |
-          docker-compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1
+          docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
         KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
