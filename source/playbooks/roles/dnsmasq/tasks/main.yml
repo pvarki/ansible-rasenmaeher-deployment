@@ -1,0 +1,49 @@
+---
+- name: Services | dnsmasq | Make sure systemd-resolved.service is started
+  become: yes
+  service:
+    name: systemd-resolved.service
+    state: started
+
+- name: dnsmasq | Ensure the APT cache is up to date
+  become: yes
+  apt:
+    update_cache: yes
+  changed_when: False
+
+- name: Services | dnsmasq | Install Dnsmasq
+  become: yes
+  package:
+    name: dnsmasq
+    state: present
+  tags: dnsmasq
+
+- name: Services | dnsmasq | Set the configuration file
+  become: yes
+  template:
+    src: ./roles/dnsmasq/templates/dnsmasq.conf.j2
+    dest: /etc/dnsmasq.conf
+  #notify: restart dnsmasq
+  tags: dnsmasq
+
+- name: Services | dnsmasq | Make sure systemd-resolved.service is stopped
+  become: yes
+  service:
+    name: systemd-resolved.service
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+
+- name: Services | dnsmasq | Template the /etc/resolv.conf to point to Dnsmasq
+  become: yes
+  template:
+    src: ./roles/dnsmasq/templates/resolv.conf.j2
+    dest: /etc/resolv.conf
+
+- name: Services | dnsmasq | Make sure Dnsmasq is running
+  become: yes
+  service:
+    name: dnsmasq
+    state: restarted
+    enabled: yes
+  tags: dnsmasq

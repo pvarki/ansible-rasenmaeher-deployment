@@ -28,6 +28,13 @@ echo ""
 
 echo "Installing ansible-galaxy roles..."
 ansible-galaxy install -r requirements.yml
+
+if [ "$OPENVPN_WANTED" == "yes" ]; then
+    echo "Openvpn wanted, installing role from Ansible Galaxy..."
+    ansible-galaxy install kyl191.openvpn
+    echo "kyl191.openvpn role installed."
+fi
+
 echo "Required roles installed."
 
 # Load environment variables
@@ -77,6 +84,8 @@ server_domain: "${SERVER_DOMAIN:-'localmaeher.pvarki.fi'}"
 cfssl_ca_name: "${CFSSL_CA_NAME:-'localmaeher'}"
 mw_le_email: "${MW_LE_EMAIL:-'example@example.com'}"
 mw_le_test: "${MW_LE_TEST:-'true'}"
+openvpn_wanted: "${OPENVPN_WANTED:-'false'}"
+openvpn_custom_dns: "${OPENVPN_CUSTOM_DNS}"
 EOF
 
 # Conditionally add dy.fi DDNS vars if ddns deploy is true

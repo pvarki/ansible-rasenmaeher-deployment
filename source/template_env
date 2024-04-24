@@ -70,3 +70,14 @@ DNS_RECORD_NAME="{{ TARGET_HOSTNAME }}.{{ DNS_ZONE_NAME }}"
 DNS_PROVIDER_URL="https://api.mydnsprovider.com/v1"
 DNS_API_TOKEN=yourdnsapitoken # pragma: allowlist secret
 WINDOWS_SERVER_DNS="false" # Is your DNS Server a WinServer?
+
+## OpenVPN
+## Do you want to deploy OVPN to the target?
+## If so, config the role vars from below.
+OPENVPN_WANTED=false
+# Expects list [string]
+# Eg [10.9.0.1,127.0.0.53]
+OPENVPN_CUSTOM_DNS=
+# List of OpenVPN clients
+# Expects list [string]
+OPENVPN_CLIENTS=[yalla1,yalla2,yalla3,yalla4,yalla5]
