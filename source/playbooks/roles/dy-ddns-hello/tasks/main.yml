@@ -1,0 +1,16 @@
+---
+- name: Dy.fi DDNS Hello | Update DDNS entry using wget
+  command:
+    cmd: >
+      wget --delete-after --no-check-certificate --no-proxy
+      --user={{ dyuser }} --password={{ dypassword }}
+      https://www.dy.fi/nic/update?hostname={{ ddns_domainname }}
+    warn: false  # Use warn=false to suppress warnings if you know what you're doing
+  register: wget_result
+  changed_when: "'No IP address change' not in wget_result.stdout"
+  ignore_errors: true  # Optional, based on whether you want to treat failures as fatal
+
+- name: Dy.fi DDNS Hello | Log wget output
+  debug:
+    msg: "Wget output: {{ wget_result.stdout }}"
+  when: wget_result is defined

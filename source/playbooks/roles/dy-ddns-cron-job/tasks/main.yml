@@ -1,0 +1,38 @@
+---
+- name: Dy.fi DDNS Cron | DDNS Cronjob
+  become: yes
+  template:
+    src: ./roles/cron-ddns-job/templates/ddnscron.sh.j2
+    dest: /etc/cron.hourly/ddnscron
+    owner: root
+    mode: 710
+
+- name: Dy.fi DDNS Cron  | Force CRON
+  become: yes
+  command:
+    cmd: 'sudo run-parts /etc/cron.hourly'
+
+  #cron:
+  #  name: "ddns"
+  #  weekday: "*"
+  #  minute: "30"
+  #  hour: "*"
+  #  user: "root"
+  #  job: "wget --delete-after --no-check-certificate --no-proxy --user={{ dyuser }} --password {{ dypassword }} https://www.dy.fi/nic/update?hostname={{ external_domainname }}"
+  #  state: present
+
+- name: Dy.fi DDNS Cron| Update DDNS entry using wget
+  command:
+    cmd: >
+      wget --delete-after --no-check-certificate --no-proxy
+      --user={{ dyuser }} --password={{ dypassword }}
+      https://www.dy.fi/nic/update?hostname={{ ddns_domainname }}
+    warn: false  # Use warn=false to suppress warnings if you know what you're doing
+  register: wget_result
+  changed_when: "'No IP address change' not in wget_result.stdout"
+  ignore_errors: true  # Optional, based on whether you want to treat failures as fatal
+
+- name: Dy.fi DDNS Cron | Log wget output
+  debug:
+    msg: "Wget output: {{ wget_result.stdout }}"
+  when: wget_result is defined

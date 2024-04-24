@@ -62,3 +62,9 @@ MW_LE_EMAIL="example@example.com"
 MW_LE_TEST="true"  # switch to false when you are ready for production
 TAKSERVER_CERT_PASS=
 TAK_CA_PASS=
+
+## DY DDNS SECRETS
+## If you deploy using dy.fi dynamic DNS, you need these.
+DYUSER=
+DYPASSWORD=
+DDNS_DOMAINNAME=

@@ -75,6 +75,15 @@ docker_repo_tag: "${DOCKER_REPO_TAG:-'main'}"
 docker_composition_repo: "${DOCKER_COMPOSITION_REPO:-https://github.com/pvarki/docker-rasenmaeher-integration.git}"
 EOF
 
+# Conditionally add dy.fi DDNS vars if ddns deploy is true
+if [ "${USE_DDNS:-false}" = "true" ]; then
+    cat >> "$HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml" <<EOF
+dyuser: "$DEPLOYMENT_SOURCE"
+dypassword: "${DEPLOY_IN_DEV:-false}"
+ddns_domainname: "${SERVER_DOMAIN}"
+EOF
+fi
+
 # Create host_vars file for the control node needed vars
 cat > "$HOST_VARS_DIR/localhost.yml" <<EOF
 ---

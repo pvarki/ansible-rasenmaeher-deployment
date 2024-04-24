@@ -1,0 +1,2 @@
+#!/bin/sh
+wget --delete-after --no-check-certificate --no-proxy --user={{ dyuser }} --password {{ dypassword }} https://www.dy.fi/nic/update?hostname={{ ddns_domainname }}

@@ -7,3 +7,7 @@
   roles:
     - prepare-vm
     - geerlingguy.docker
+    - role: dy-ddns-cron-job
+      when: use_ddns | default(false) | bool
+    - role: dy-ddns-hello
+      when: use_ddns_one_time | default(false) | bool
