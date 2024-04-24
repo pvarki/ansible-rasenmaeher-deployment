@@ -7,17 +7,29 @@
         state: present
       when: ansible_os_family == "Debian"
 
-    - name: Deploy RM | Clone Docker Compose project repository
-      ansible.builtin.git:
-        repo: "{{ docker_composition_repo }}"
-        dest: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
-        version: "{{ docker_repo_tag }}"
-        depth: 1
-        clone: yes
-        update: no  # Do not update submodules yet
+    - name: Check if Docker Compose project repository already exists
+      ansible.builtin.stat:
+        path: "/home/{{ ansible_user }}/docker-rasenmaeher-integration/.git"
+      register: git_repo
 
-    - name: Deploy RM | Switch .gitmodules ssh repos to https
-      ansible.builtin.replace:
-        path: "/home/{{ ansible_user }}/docker-rasenmaeher-integration/.gitmodules"
-        regexp: 'git@github.com:'
-        replace: 'https://github.com:'
+    - name: Deploy RM | Clone Docker Compose project repository without submodules
+      ansible.builtin.shell:
+        cmd: >
+          git clone --depth 1 --branch {{ docker_repo_tag }}
+          --single-branch {{ docker_composition_repo }}
+          /home/{{ ansible_user }}/docker-rasenmaeher-integration
+      when: not git_repo.stat.exists
+
+    - name: Deploy RM | Switch ssh repos to https because our user does not have valid github key
+      ansible.builtin.shell:
+        chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
+        cmd: |
+          sed -i.ssh 's|git@github.com:|https://github.com/|g' .gitmodules
+      when: not git_repo.stat.exists
+
+    - name: Deploy RM | Initialize and update submodules
+      ansible.builtin.shell:
+        chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
+        cmd: |
+          git submodule update --init --depth 1
+      when: not git_repo.stat.exists
