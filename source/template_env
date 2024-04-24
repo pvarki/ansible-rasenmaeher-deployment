@@ -29,6 +29,7 @@ WINDOWS_SERVER_DNS="false" # Is your DNS Server a WinServer?
 
 # Localhost vars
 LOCALHOST_BECOME_PASSWORD=
+LOCALHOST_USER=
 
 # Admin Credentials (For manual SSH connections)
 TARGET_ADMINUSER=admin

@@ -78,7 +78,10 @@ EOF
 # Create host_vars file for the control node needed vars
 cat > "$HOST_VARS_DIR/localhost.yml" <<EOF
 ---
+ansible_user: "${LOCALHOST_USER:-'user'}"
 ansible_become_password: "${LOCALHOST_BECOME_PASSWORD:-'password'}"
+ansible_become: true
+ansible_become_method: sudo
 EOF
 
 # Create host_vars file for the DNS server
