@@ -16,6 +16,12 @@ ansible-vault decrypt inventory//host_vars/which-host-you-want-to-decrypt.yml --
 ```
 Decrypt a host yml to see address, credentials etc.
 
+# Env
+Template-env provided. Some options:
+- RM CI vars? While others have defaults, you **must** define DOCKER_REP_TAG. See Version Tags from https://github.com/pvarki/docker-rasenmaeher-integration for applicable versiontags.
+- Use DNS service? If you have a DNS to resolve docker container domainnames for inbound connections, set the flag ```DO_YOU_WANT_TO_USE_DNS``` true.
+- Use dy.fi DDNS? If you need to deploy a VM to some local server that needs DDNS, you can use this role. It requires username and pass to dy.fi DDNS service.
+
 # Logic
 ### source root
 The env template & set-inventory.sh to get you going. Unless you are developing things, you don't need to worry much about anything else but this and your inventory.
