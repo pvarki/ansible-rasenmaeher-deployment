@@ -1,0 +1,24 @@
+---
+- name: Deploy RM | Debug dockercompose_local_location
+  debug:
+    msg: "The path is {{ dockercompose_local_location }}"
+
+- name: Ensure the Docker Rasenmaeher integration directory exists
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Deploy RM | Deploy Docker Compose from local source
+  when: deployment_source == 'local'
+  block:
+    - name: Deploy RM | Synchronize Docker Compose project directory from control node
+      ansible.builtin.synchronize:
+        src: "{{ dockercompose_local_location }}/"
+        dest: /home/{{ ansible_user }}/docker-rasenmaeher-integration"
+        recursive: true
+        delete: true
+        mode: 'push'
+      delegate_to: "{{ inventory_hostname }}"
+      become: true

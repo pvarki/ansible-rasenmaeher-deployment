@@ -2,10 +2,19 @@
 - include_tasks: manage_vars.yml
 # - include_tasks: prepare_dns.yml
 - include_tasks: do_firewall.yml
-- name: Include Development Deployment Tasks
+
+- name: Grab RM from Github
+  include_tasks: grab_rm.yml
+  when: deployment_source | default(remote) | bool
+
+- name: Rsync RM from the control node
+  include_tasks: rsync_rm.yml
+  when: deployment_source | default(local) | bool
+
+- name: Deploy RM in Dev mode
   include_tasks: deploy_dev_rm.yml
   when: deploy_in_dev | default(false) | bool
 
-- name: Include Production Deployment Tasks
+- name: Deploy RM in Production mode
   include_tasks: deploy_prod_rm.yml
   when: not deploy_in_dev | default(false) | bool

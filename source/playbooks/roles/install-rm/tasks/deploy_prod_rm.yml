@@ -1,25 +1,11 @@
 ---
-- name: Deploy RM | Debug dockercompose_local_location
-  debug:
-    msg: "The path is {{ dockercompose_local_location }}"
-
-- name: Deploy RM | Deploy Docker Compose from local source
-  when: deployment_source == 'local'
+- name: Deploy RM | Build RM locally if so is desired
+  when: build_locally == 'true'
   block:
-    - name: Deploy RM | Synchronize Docker Compose project directory from control node
-      ansible.builtin.synchronize:
-        src: "{{ dockercompose_local_location }}/"
-        dest: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
-        recursive: true
-        delete: true
-        mode: 'push'
-      delegate_to: localhost
-      become: true
-
     - name: Deploy RM | Build Docker Compose project when local and log output
       ansible.builtin.shell:
         cmd: |
-          docker-compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml build > /home/{{ ansible_user }}/compose_output.log 2>&1
+           docker-compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml build > /home/{{ ansible_user }}/compose_output.log 2>&1
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
         KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
@@ -48,29 +34,8 @@
         msg: "{{ log_output.stdout_lines }}"
 
 - name: Deploy RM | Deploy Docker Compose from remote repository
-  when: deployment_source == 'remote'
+  when: build_locally == 'false'
   block:
-    - name: Ensure git is installed (Debian/Ubuntu)
-      ansible.builtin.apt:
-        name: git
-        state: present
-      when: ansible_os_family == "Debian"
-
-    - name: Deploy RM | Clone Docker Compose project repository
-      ansible.builtin.git:
-        repo: "{{ docker_composition_repo }}"
-        dest: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
-        version: "{{ docker_repo_tag }}"
-        depth: 1
-        clone: yes
-        update: no  # Do not update submodules yet
-
-    - name: Deploy RM | Switch .gitmodules ssh repos to https
-      ansible.builtin.replace:
-        path: "/home/{{ ansible_user }}/docker-rasenmaeher-integration/.gitmodules"
-        regexp: 'git@github.com:'
-        replace: 'https://github.com:'
-
     - name: Deploy RM | Pull Docker Compose images
       ansible.builtin.shell:
         cmd: |
@@ -92,6 +57,7 @@
         TAK_CA_PASS: "{{ tak_ca_pass }}"
       become: false
       ignore_errors: true
+
 
     - name: Deploy RM | Start Docker Compose in detached mode and log output
       ansible.builtin.shell:

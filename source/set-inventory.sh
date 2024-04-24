@@ -73,6 +73,7 @@ dockercompose_local_location: "$DOCKERCOMPOSE_LOCAL_LOCATION"
 docker_compose_path: "$DOCKER_COMPOSE_PATH"
 docker_repo_tag: "${DOCKER_REPO_TAG:-'main'}"
 docker_composition_repo: "${DOCKER_COMPOSITION_REPO:-https://github.com/pvarki/docker-rasenmaeher-integration.git}"
+build_locally: "${BUILD_LOCALLY:-'false'}"
 EOF
 
 # Conditionally add dy.fi DDNS vars if ddns deploy is true
@@ -103,7 +104,7 @@ ansible_become: true
 ansible_become_method: sudo
 ansible_ssh_private_key_file: "${DNS_SERVER_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE:-''}"
 hostname: "${DNS_SERVER_HOST:-'dns-server'}"
-a nsible_become_password: "${DNSHOST_BECOME_PASSWORD:-'password'}"
+ansible_become_password: "${DNSHOST_BECOME_PASSWORD:-'password'}"
 EOF
 
 # Conditionally add Windows-specific variables if windows_server_dns is true

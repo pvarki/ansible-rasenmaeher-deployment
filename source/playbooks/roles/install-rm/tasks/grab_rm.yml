@@ -1,0 +1,23 @@
+- name: Deploy RM | Deploy Docker Compose from remote repository
+  when: deployment_source == 'remote'
+  block:
+    - name: Ensure git is installed (Debian/Ubuntu)
+      ansible.builtin.apt:
+        name: git
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Deploy RM | Clone Docker Compose project repository
+      ansible.builtin.git:
+        repo: "{{ docker_composition_repo }}"
+        dest: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
+        version: "{{ docker_repo_tag }}"
+        depth: 1
+        clone: yes
+        update: no  # Do not update submodules yet
+
+    - name: Deploy RM | Switch .gitmodules ssh repos to https
+      ansible.builtin.replace:
+        path: "/home/{{ ansible_user }}/docker-rasenmaeher-integration/.gitmodules"
+        regexp: 'git@github.com:'
+        replace: 'https://github.com:'

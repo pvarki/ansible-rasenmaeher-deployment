@@ -15,17 +15,6 @@ TARGET_ANSIBLEUSER_SSH_PUBLIC_KEY_FILE=$HOME/.ssh/id_rsa.pub
 ENVIRONMENT_STAGE=staging # If this is 'production', the playbook will use the production settings
 TARGET_HOSTNAME=staging-server
 TARGET_ANSIBLE_HOST=192.168.1.100
-# Do you want to deploy Rasenmaeher from your local control node or the Github repo?
-# Options: 'local' or 'remote'
-DEPLOYMENT_SOURCE="remote"
-
-# DNS Configuration
-DO_YOU_WANT_TO_USE_DNS=false
-DNS_ZONE_NAME="pvarki.fi"
-DNS_RECORD_NAME="{{ TARGET_HOSTNAME }}.{{ DNS_ZONE_NAME }}"
-DNS_PROVIDER_URL="https://api.mydnsprovider.com/v1"
-DNS_API_TOKEN=yourdnsapitoken # pragma: allowlist secret
-WINDOWS_SERVER_DNS="false" # Is your DNS Server a WinServer?
 
 # Localhost vars
 LOCALHOST_BECOME_PASSWORD=
@@ -40,11 +29,16 @@ TARGET_ADMINPASS=adminpassword
 DOCKER_REPO_TAG=
 # Where the integration repo lies now in the Internet?
 DOCKER_COMPOSITION_REPO=
+# Do you want to deploy Rasenmaeher from your local control node or the Github repo?
+# Options: 'local' or 'remote'
+DEPLOYMENT_SOURCE="remote"
 # Where the integration repo lies now in control node, if you want to deliver it
 # from your local machine?
 DOCKERCOMPOSE_LOCAL_LOCATION=
-# Do you want to deploy RM in DEV mode?
+# Do you want to deploy RM in DEV mode? True to do so. Else, production scripts are used.
 DEPLOY_IN_DEV=
+# Do you want to build RM locally? Default is false.
+BUILD_LOCALLY=
 
 ### RM VARS
 # Works like so, that either define these here, or the playbook will generate them.
@@ -68,3 +62,11 @@ TAK_CA_PASS=
 DYUSER=
 DYPASSWORD=
 DDNS_DOMAINNAME=
+
+# DNS Configuration
+DO_YOU_WANT_TO_USE_DNS=false
+DNS_ZONE_NAME="pvarki.fi"
+DNS_RECORD_NAME="{{ TARGET_HOSTNAME }}.{{ DNS_ZONE_NAME }}"
+DNS_PROVIDER_URL="https://api.mydnsprovider.com/v1"
+DNS_API_TOKEN=yourdnsapitoken # pragma: allowlist secret
+WINDOWS_SERVER_DNS="false" # Is your DNS Server a WinServer?
