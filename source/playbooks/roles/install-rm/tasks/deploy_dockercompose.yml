@@ -96,6 +96,7 @@
         TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
         TAK_CA_PASS: "{{ tak_ca_pass }}"
       become: false
+      ignore_errors: true
 
     - name: Deploy RM | Start Docker Compose in detached mode and log output
       ansible.builtin.shell:

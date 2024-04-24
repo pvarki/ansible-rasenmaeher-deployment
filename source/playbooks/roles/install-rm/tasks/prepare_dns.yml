@@ -1,21 +1,42 @@
 ---
-- name: Deploy RM | Update DNS A records, if applicable
-  ansible.builtin.uri:
-    url: "{{ dns_provider_url }}/domains/{{ dns_zone_name }}/records/A/{{ item.name }}"
-    method: PUT
-    body_format: json
-    body:
-      ttl: 300
-      value: "{{ target_ip_address }}"
-    headers:
-      Authorization: "Bearer {{ dns_api_token }}"
-    status_code: 200
-    validate_certs: yes
-  loop:
-        - { name: "{{ deployment_name }}", ttl: 300 }
-        - { name: "mtls.{{ deployment_name }}", ttl: 300 }
-        - { name: "tak.{{ deployment_name }}", ttl: 300 }
-        - { name: "mtls.tak.{{ deployment_name }}", ttl: 300 }
-        - { name: "fake.{{ deployment_name }}", ttl: 300 }
-        - { name: "mtls.fake.{{ deployment_name }}", ttl: 300 }
-  when: dns_wanted is true
+- name: Update DNS A records based on environment
+  hosts: all
+  tasks:
+    - name: Update DNS A records via API
+      ansible.builtin.uri:
+        url: "{{ dns_provider_url }}/domains/{{ dns_zone_name }}/records/A/{{ item.name }}"
+        method: PUT
+        body_format: json
+        body:
+          ttl: 300
+          value: "{{ dns_server_host }}"
+        headers:
+          Authorization: "Bearer {{ dns_api_token }}"
+        status_code: 200
+        validate_certs: yes
+      loop:
+        - { name: "{{ server_domain }}" }
+        - { name: "mtls.{{ server_domain }}" }
+        - { name: "tak.{{ server_domain }}" }
+        - { name: "mtls.tak.{{ server_domain }}" }
+        - { name: "fake.{{ server_domain }}" }
+        - { name: "mtls.fake.{{ server_domain }}" }
+      when: dns_wanted is true and not windows_server_dns
+      delegate_to: "{{ localhost }}"
+
+    - name: Ensure DNS A records are set on Windows Server
+      ansible.windows.win_command:
+        cmd: |
+          Add-DnsServerResourceRecordA -Name "{{ item.name }}" -ZoneName "{{ dns_zone_name }}" -IPv4Address "{{ target_ip_address }}" -AllowUpdateAny -TimeToLive 300 -ErrorAction SilentlyContinue
+          if ($LASTEXITCODE -ne 0) {
+            Set-DnsServerResourceRecordA -Name "{{ item.name }}" -ZoneName "{{ dns_zone_name }}" -NewIPv4Address "{{ target_ip_address }}" -NewTimeToLive 300 -Confirm:$false
+          }
+      loop:
+        - { name: "{{ server_domain }}" }
+        - { name: "mtls.{{ server_domain }}" }
+        - { name: "tak.{{ server_domain }}" }
+        - { name: "mtls.tak.{{ server_domain }}" }
+        - { name: "fake.{{ server_domain }}" }
+        - { name: "mtls.fake.{{ server_domain }}" }
+      when: dns_wanted is true and windows_server_dns
+      delegate_to: "{{ dns_server_host }}"

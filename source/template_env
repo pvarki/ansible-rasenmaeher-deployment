@@ -25,6 +25,7 @@ DNS_ZONE_NAME="pvarki.fi"
 DNS_RECORD_NAME="{{ TARGET_HOSTNAME }}.{{ DNS_ZONE_NAME }}"
 DNS_PROVIDER_URL="https://api.mydnsprovider.com/v1"
 DNS_API_TOKEN=yourdnsapitoken # pragma: allowlist secret
+WINDOWS_SERVER_DNS="false" # Is your DNS Server a WinServer?
 
 # Localhost vars
 LOCALHOST_BECOME_PASSWORD=

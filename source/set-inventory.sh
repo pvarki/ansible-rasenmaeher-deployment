@@ -23,7 +23,7 @@ echo "| | | || |\  |/\__/ / _| |_ | |_/ /| |____| |___                          
 echo "\_| |_/\_| \_/\____/  \___/ \____/ \_____/\____/                              "
 echo "                                                                              "
 echo "                                                                             "
-echo "Version: 18 April 2024"
+echo "Version: 24 April 2024"
 echo ""
 
 echo "Installing ansible-galaxy roles..."
@@ -72,11 +72,6 @@ dockercompose_local_location: "$DOCKERCOMPOSE_LOCAL_LOCATION"
 docker_compose_path: "$DOCKER_COMPOSE_PATH"
 docker_repo_tag: "${DOCKER_REPO_TAG:-'main'}"
 docker_composition_repo: "${DOCKER_COMPOSITION_REPO:-https://github.com/pvarki/docker-rasenmaeher-integration.git}"
-dns_wanted: "${DO_YOU_WANT_TO_USE_DNS}"
-dns_zone_name: "${DNS_ZONE_NAME:-'pvarki.fi'}"
-dns_record_name: "${DNS_RECORD_NAME:-$TARGET_HOSTNAME.pvarki.fi}"
-dns_provider_url: "${DNS_PROVIDER_URL}"
-dns_api_token: "${DNS_API_TOKEN}"
 EOF
 
 # Create host_vars file for the control node needed vars
@@ -85,9 +80,38 @@ cat > "$HOST_VARS_DIR/localhost.yml" <<EOF
 ansible_become_password: "${LOCALHOST_BECOME_PASSWORD:-'password'}"
 EOF
 
+# Create host_vars file for the DNS server
+cat > "$HOST_VARS_DIR/dns-server.yml" <<EOF
+---
+ansible_host: "${TARGET_ANSIBLE_HOST:-}"
+ansible_distribution: "${TARGET_ANSIBLE_DISTRIBUTION:-'Windows'}"
+ansible_user: "${DNSHOST_ANSIBLE_USER:-'ansible'}"
+ansible_become: true
+ansible_become_method: sudo
+ansible_ssh_private_key_file: "${DNS_SERVER_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE:-''}"
+hostname: "${DNS_SERVER_HOST:-'dns-server'}"
+ansible_become_password: "${DNSHOST_BECOME_PASSWORD:-'password'}"
+EOF
+
+# Conditionally add Windows-specific variables if windows_server_dns is true
+if [ "${WINDOWS_SERVER_DNS:-false}" = "true" ]; then
+    cat >> "$HOST_VARS_DIR/dns-server.yml" <<EOF
+ansible_connection: winrm
+ansible_winrm_transport: ntlm
+ansible_winrm_server_cert_validation: ignore
+EOF
+fi
+
 # Create group_vars file for group-specific variables
 cat > "$GROUP_VARS_DIR/$TARGET_HOSTNAME.yml" <<EOF
 ---
+dns_wanted: "${DO_YOU_WANT_TO_USE_DNS}"
+dns_zone_name: "${DNS_ZONE_NAME:-'pvarki.fi'}"
+dns_record_name: "${DNS_RECORD_NAME:-$TARGET_HOSTNAME.pvarki.fi}"
+dns_provider_url: "${DNS_PROVIDER_URL}"
+dns_api_token: "${DNS_API_TOKEN}"
+windows_server_dns: "${WINDOWS_SERVER_DNS:-false}"
+deployment_name: "${SERVER_DOMAIN:-'localmaeher.pvarki.fi'}"
 EOF
 
 # Create or update hosts.yml in the main inventory directory
