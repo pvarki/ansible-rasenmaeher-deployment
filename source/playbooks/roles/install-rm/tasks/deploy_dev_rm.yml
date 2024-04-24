@@ -19,7 +19,7 @@
     - name: Deploy RM | Build Docker Compose project when local and log output
       ansible.builtin.shell:
         cmd: |
-          docker-compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml build > /home/{{ ansible_user }}/compose_output.log 2>&1
+          docker compose -p rmdev -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-local.yml -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-dev.yml build > /home/{{ ansible_user }}/compose_output.log 2>&1
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
         KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
@@ -35,20 +35,15 @@
         MW_LE_TEST: "{{ mw_le_test }}"
         TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
         TAK_CA_PASS: "{{ tak_ca_pass }}"
-      async: 900
-      poll: 0
+      timeout: 900
       register: build_job
 
-    - name: Periodically fetch the last 20 lines of the build log
+    - name: Fetch log
       ansible.builtin.shell:
-        cmd: tail -n 20 /home/{{ ansible_user }}/compose_output.log
+        cmd: cat /home/{{ ansible_user }}/compose_output.log
       register: log_output
-      until: "'Successfully built' in log_output.stdout or 'ERROR' in log_output.stdout"
-      retries: 120  # Check every 30 seconds for one hour
-      delay: 30
-      ignore_errors: true
 
-    - name: Output final portion of logs
+    - name: Deploy RM | Output final portion of logs
       ansible.builtin.debug:
         msg: "{{ log_output.stdout_lines }}"
 
@@ -101,7 +96,7 @@
     - name: Deploy RM | Start Docker Compose in detached mode and log output
       ansible.builtin.shell:
         cmd: |
-          docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1
+          docker compose -p rmdev -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-local.yml -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-dev.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
         KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
@@ -118,19 +113,14 @@
         TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
         TAK_CA_PASS: "{{ tak_ca_pass }}"
       become: no
-      async: 900
-      poll: 0
+      timeout: 1500
       register: compose_background
 
-    - name: Periodically fetch the last 20 lines of the build log
+    - name: Deploy RM | Fetch log
       ansible.builtin.shell:
-        cmd: tail -n 20 /home/{{ ansible_user }}/compose_output.log
+        cmd: cat /home/{{ ansible_user }}/compose_output.log
       register: log_output
-      until: "'Successfully built' in log_output.stdout or 'ERROR' in log_output.stdout"
-      retries: 120  # Check every 30 seconds for one hour
-      delay: 30
-      ignore_errors: true
 
-    - name: Output final portion of logs
+    - name: Deploy RM | Output final portion of logs
       ansible.builtin.debug:
         msg: "{{ log_output.stdout_lines }}"

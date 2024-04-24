@@ -68,6 +68,7 @@ ansible_password: "${TARGET_ANSIBLEPASS:-'password'}"
 adminuser: "${TARGET_ADMINUSER:-'admin'}"
 adminpwd: "${TARGET_ADMINPASS:-'password'}"
 deployment_source: "$DEPLOYMENT_SOURCE"
+deploy_in_dev: "${DEPLOY_IN_DEV:-false}"
 dockercompose_local_location: "$DOCKERCOMPOSE_LOCAL_LOCATION"
 docker_compose_path: "$DOCKER_COMPOSE_PATH"
 docker_repo_tag: "${DOCKER_REPO_TAG:-'main'}"
@@ -90,7 +91,7 @@ ansible_become: true
 ansible_become_method: sudo
 ansible_ssh_private_key_file: "${DNS_SERVER_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE:-''}"
 hostname: "${DNS_SERVER_HOST:-'dns-server'}"
-ansible_become_password: "${DNSHOST_BECOME_PASSWORD:-'password'}"
+a nsible_become_password: "${DNSHOST_BECOME_PASSWORD:-'password'}"
 EOF
 
 # Conditionally add Windows-specific variables if windows_server_dns is true
