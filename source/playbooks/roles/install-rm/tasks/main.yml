@@ -1,6 +1,6 @@
 ---
 - include_tasks: manage_vars.yml
-- include_tasks: prepare_dns.yml
+# - include_tasks: prepare_dns.yml
 - include_tasks: do_firewall.yml
 - name: Include Development Deployment Tasks
   include_tasks: deploy_dev_rm.yml
