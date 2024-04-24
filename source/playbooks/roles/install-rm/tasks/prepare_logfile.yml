@@ -1,0 +1,9 @@
+---
+    - name: Create or clear the log file with read permissions for everyone
+      copy:
+        dest: "/home/{{ ansible_user }}/compose_output.log"
+        content: ''
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0666'
+        force: yes

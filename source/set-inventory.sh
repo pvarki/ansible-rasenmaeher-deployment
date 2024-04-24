@@ -64,7 +64,6 @@ ansible_host: "${TARGET_ANSIBLE_HOST:-}"
 ansible_distribution: "${TARGET_ANSIBLE_DISTRIBUTION:-'Ubuntu'}"
 hostname: "${TARGET_HOSTNAME:-'default-hostname'}"
 ansible_user: "${TARGET_ANSIBLEUSER:-'ansible'}"
-ansible_password: "${TARGET_ANSIBLEPASS:-'password'}"
 adminuser: "${TARGET_ADMINUSER:-'admin'}"
 adminpwd: "${TARGET_ADMINPASS:-'password'}"
 deployment_source: "$DEPLOYMENT_SOURCE"
@@ -74,6 +73,10 @@ docker_compose_path: "$DOCKER_COMPOSE_PATH"
 docker_repo_tag: "${DOCKER_REPO_TAG:-'main'}"
 docker_composition_repo: "${DOCKER_COMPOSITION_REPO:-https://github.com/pvarki/docker-rasenmaeher-integration.git}"
 build_locally: "${BUILD_LOCALLY:-'false'}"
+server_domain: "${SERVER_DOMAIN:-'localmaeher.pvarki.fi'}"
+cfssl_ca_name: "${CFSSL_CA_NAME:-'localmaeher'}"
+mw_le_email: "${MW_LE_EMAIL:-'example@example.com'}"
+mw_le_test: "${MW_LE_TEST:-'true'}"
 EOF
 
 # Conditionally add dy.fi DDNS vars if ddns deploy is true

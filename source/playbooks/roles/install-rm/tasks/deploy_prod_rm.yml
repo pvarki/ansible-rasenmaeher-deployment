@@ -22,6 +22,7 @@
         TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
         TAK_CA_PASS: "{{ tak_ca_pass }}"
       timeout: 900
+      become: yes
       register: build_job
 
     - name: Fetch log

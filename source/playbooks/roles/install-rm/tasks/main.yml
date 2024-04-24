@@ -5,11 +5,11 @@
 
 - name: Grab RM from Github
   include_tasks: grab_rm.yml
-  when: deployment_source | default(remote) | bool
+  when: deployment_source | default('remote') == 'remote'
 
 - name: Rsync RM from the control node
   include_tasks: rsync_rm.yml
-  when: deployment_source | default(local) | bool
+  when: deployment_source | default('remote') == 'local'
 
 - name: Deploy RM in Dev mode
   include_tasks: deploy_dev_rm.yml
