@@ -1,6 +1,5 @@
 secrets:
   {
-    "keycloak_db_password": "{{ keycloak_db_password | default('') }}",
     "rm_database_password": "{{ rm_database_password | default('') }}",
     "tak_database_password": "{{ tak_database_password | default('') }}",
     "postgres_password": "{{ postgres_password | default('') }}",

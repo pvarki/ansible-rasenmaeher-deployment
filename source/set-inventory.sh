@@ -12,8 +12,8 @@ echo " ^^^^^^Serving^^^^^^^^'-' '-'^Those^Close^To^Grass^^^ "
 echo ""
 echo "______   ___   _____  _____  _   _ ___  ___  ___   _____  _   _  _____ ______ "
 echo "| ___ \ / _ \ /  ___||  ___|| \ | ||  \/  | / _ \ |  ___|| | | ||  ___|| ___ \ "
-echo "| |_/ // /_\ \\ \`--. | |__  |  \| || .  . |/ /_\ \| |__  | |_| || |__  | |_/ /"
-echo "|    / |  _  | \`--. \|  __| | . \` || |\/| ||  _  ||  __| |  _  ||  __| |    / "
+echo "| |_/ // /_\ \\ \`--.| |__  |  \| || .  . |/ /_\ \| |__  | |_| || |__  | |_/ /"
+echo "|    / |  _  | \`--. \|  _| | . \`|| |\/| ||  _  ||  __| |  _  ||  __| |    / "
 echo "| |\ \ | | | |/\__/ /| |___ | |\  || |  | || | | || |___ | | | || |___ | |\ \ "
 echo "\_|_\_|\_| |_/\____/ \____/ \_|_\_/\_|  |_/\_|_|_/\____/ \_| |_/\____/ \_| \_|"
 echo " / _ \ | \ | |/  ___||_   _|| ___ \| |    |  ___|                             "
@@ -104,6 +104,7 @@ ansible_user: "${LOCALHOST_USER:-'user'}"
 ansible_become_password: "${LOCALHOST_BECOME_PASSWORD:-'password'}"
 ansible_become: true
 ansible_become_method: sudo
+local_user: "${LOCALHOST_USER:-'user'}"
 EOF
 
 # Create host_vars file for the DNS server

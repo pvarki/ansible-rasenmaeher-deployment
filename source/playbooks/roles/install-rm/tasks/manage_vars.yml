@@ -16,18 +16,26 @@
     state: directory
   delegate_to: localhost
 
+- name: Ensure the secrets file exists and set correct permissions
+  ansible.builtin.file:
+    path: "../inventory/host_vars/{{ inventory_hostname }}/rasenmaeher_secrets.yml"
+    state: touch
+    owner: "{{ ansible_env.USER }}"
+    mode: '0644'
+  delegate_to: localhost
+
 - name: Write vars to file on the control node
   copy:
     content: |
-      rm_database_password: "{{ rm_database_password }}"
-      postgres_password: "{{ postgres_password }}"
-      ldap_admin_password: "{{ ldap_admin_password }}"
-      keycloak_admin_password: "{{ keycloak_admin_password }}"
-      keycloak_management_password: "{{ keycloak_management_password }}"
-      keycloak_database_password: "{{ keycloak_database_password }}"
-      takserver_cert_pass: "{{ takserver_cert_pass }}"
-      tak_database_password_password: "{{ tak_database_password }}"
-      tak_ca_pass: "{{ tak_ca_pass }}"
+      rm_database_password: '{{ rm_database_password }}'
+      postgres_password: '{{ postgres_password }}'
+      ldap_admin_password: '{{ ldap_admin_password }}'
+      keycloak_admin_password: '{{ keycloak_admin_password }}'
+      keycloak_management_password: '{{ keycloak_management_password }}'
+      keycloak_database_password: '{{ keycloak_database_password }}'
+      takserver_cert_pass: '{{ takserver_cert_pass }}'
+      tak_database_password_password: '{{ tak_database_password }}'
+      tak_ca_pass: '{{ tak_ca_pass }}'
     dest: "../inventory/host_vars/{{ inventory_hostname }}/rasenmaeher_secrets.yml"
   delegate_to: localhost
 
@@ -42,6 +50,14 @@
   register: vault_encryption_result
   become: no
   ignore_errors: true  # Optionally add this to not fail the playbook and examine the output
+
+- name: Ensure the secrets file exists and set correct permissions
+  ansible.builtin.file:
+    path: "../inventory/host_vars/{{ inventory_hostname }}/rasenmaeher_secrets.yml"
+    state: touch
+    owner: "{{ ansible_env.USER }}"
+    mode: '0644'
+  delegate_to: localhost
 
 - name: Debug vault encryption result
   ansible.builtin.debug:

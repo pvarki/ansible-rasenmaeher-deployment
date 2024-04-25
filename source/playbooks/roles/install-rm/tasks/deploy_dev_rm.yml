@@ -1,10 +1,53 @@
 - name: Deploy RM | Build RM locally if so is desired
   when: build_locally == 'true'
   block:
+    - name: Check if Docker Compose containers are already built
+      ansible.builtin.shell:
+        cmd: docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-local.yml -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-dev.yml images | grep 'None'
+      register: docker_images_check
+      ignore_errors: true
+      changed_when: false
+
+    - name: Debug environment variable values
+      ansible.builtin.debug:
+        msg: |
+          KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
+          RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
+          POSTGRES_PASSWORD: "{{ postgres_password }}"
+          LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
+          KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
+          KEYCLOAK_MANAGEMENT_PASSWORD: "{{ keycloak_management_password }}"
+          TAK_DATABASE_PASSWORD: "{{ tak_database_password }}"
+          SERVER_DOMAIN: "{{ server_domain }}"
+          CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
+          MW_LE_EMAIL: "{{ mw_le_email }}"
+          MW_LE_TEST: "{{ mw_le_test }}"
+          TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
+          TAK_CA_PASS: "{{ tak_ca_pass }}"
+
     - name: Deploy RM | Build Docker Compose project when local and log output
+      when: build_locally == 'true' and docker_images_check.stdout != ''
       ansible.builtin.shell:
         cmd: |
           docker compose -p rmdev -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-local.yml -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-dev.yml build > /home/{{ ansible_user }}/compose_output.log 2>&1
+        chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
+      timeout: 900
+      become: yes
+      register: build_job
+
+    - name: Fetch log
+      ansible.builtin.shell:
+        cmd: cat /home/{{ ansible_user }}/compose_output.log
+      register: log_output
+
+    - name: Deploy RM | Output final portion of logs
+      ansible.builtin.debug:
+        msg: "{{ log_output.stdout_lines }}"
+
+    - name: Deploy RM | Start Docker Compose in detached mode and log output
+      ansible.builtin.shell:
+        cmd: |
+          docker compose -p rmdev -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-local.yml -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-dev.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1 || true
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
         KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
@@ -20,11 +63,39 @@
         MW_LE_TEST: "{{ mw_le_test }}"
         TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
         TAK_CA_PASS: "{{ tak_ca_pass }}"
-      timeout: 900
-      become: yes
-      register: build_job
+      become: no
+      timeout: 1500
+      ignore_errors: true
+      register: compose_background
 
-    - name: Fetch log
+    - name: Delay before health check
+      ansible.builtin.pause:
+        seconds: 30
+
+    - name: Check and manage container health
+      block:
+        - name: Check container health status
+          ansible.builtin.shell:
+            cmd: docker ps --filter "status=unhealthy" --format "{{ '{{.Names}}' }}"
+          register: unhealthy_containers
+          until: unhealthy_containers.stdout_lines == []
+          retries: 10
+          delay: 30 
+          ignore_errors: true
+
+        - name: Restart unhealthy containers
+          ansible.builtin.shell:
+            cmd: docker restart {{ item }}
+          loop: "{{ unhealthy_containers.stdout_lines }}"
+          when: unhealthy_containers.stdout_lines | length > 0
+          register: restart_status
+
+        - name: Debug restart status
+          ansible.builtin.debug:
+            var: restart_status
+          when: compose_background is defined
+
+    - name: Deploy RM | Fetch log
       ansible.builtin.shell:
         cmd: cat /home/{{ ansible_user }}/compose_output.log
       register: log_output
@@ -58,11 +129,10 @@
       become: false
       ignore_errors: true
 
-
     - name: Deploy RM | Start Docker Compose in detached mode and log output
       ansible.builtin.shell:
         cmd: |
-          docker compose -p rmdev -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-local.yml -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-dev.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1
+          docker compose -p rmdev -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-local.yml -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose-dev.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1 || true
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
         KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
@@ -80,7 +150,35 @@
         TAK_CA_PASS: "{{ tak_ca_pass }}"
       become: no
       timeout: 1500
+      ignore_errors: true
       register: compose_background
+
+    - name: Delay before health check
+      ansible.builtin.pause:
+        seconds: 30  # Adjust the delay as needed to allow services to stabilize
+
+    - name: Check and manage container health
+      block:
+        - name: Check container health status
+          ansible.builtin.shell:
+            cmd: docker ps --filter "health=unhealthy" --format "{{ '{{.Names}}' }}"
+          register: unhealthy_containers
+          until: unhealthy_containers.stdout_lines == []
+          retries: 10  # Adjust based on how many times you want to retry
+          delay: 30   # Delay between retries, adjust based on expected recovery times
+          ignore_errors: true
+
+        - name: Restart unhealthy containers
+          ansible.builtin.shell:
+            cmd: docker restart {{ item }}
+          loop: "{{ unhealthy_containers.stdout_lines }}"
+          when: unhealthy_containers.stdout_lines | length > 0
+          register: restart_status
+
+        - name: Debug restart status
+          ansible.builtin.debug:
+            var: restart_status
+          when: compose_background is defined
 
     - name: Deploy RM | Fetch log
       ansible.builtin.shell:
