@@ -6,6 +6,7 @@
 
   roles:
     - prepare-vm
+    - dnsmasq
     - geerlingguy.docker
     - role: dy-ddns-cron-job
       when: use_ddns | default(false) | bool

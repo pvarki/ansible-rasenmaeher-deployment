@@ -134,51 +134,51 @@
         cmd: |
           docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml pull > /home/{{ ansible_user }}/compose_output.log 2>&1
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
-      environment:
-        KEYCLOAK_DATABASE_PASSWORD: "{{ secrets.keycloak_database_password }}"
-        RM_DATABASE_PASSWORD: "{{ secrets.rm_database_password }}"
-        POSTGRES_PASSWORD: "{{ secrets.postgres_password }}"
-        LDAP_ADMIN_PASSWORD: "{{ secrets.ldap_admin_password }}"
-        KEYCLOAK_ADMIN_PASSWORD: "{{ secrets.keycloak_admin_password }}"
-        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ secrets.keycloak_management_password }}"
-        TAK_DATABASE_PASSWORD: "{{ secrets.tak_database_password }}"
-        SERVER_DOMAIN: "{{ server_domain }}"
-        CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
-        MW_LE_EMAIL: "{{ mw_le_email }}"
-        MW_LE_TEST: "{{ mw_le_test }}"
-        TAKSERVER_CERT_PASS: "{{ secrets.takserver_cert_pass }}"
-        TAK_CA_PASS: "{{ secrets.tak_ca_pass }}"
       become: false
       ignore_errors: true
 
+    - name: Create .env file for Docker Compose
+      ansible.builtin.copy:
+        dest: "/home/{{ ansible_user }}/docker-rasenmaeher-integration/.env"
+        content: |
+          KEYCLOAK_DATABASE_PASSWORD={{ secrets.keycloak_database_password }}
+          RM_DATABASE_PASSWORD={{ secrets.rm_database_password }}
+          POSTGRES_PASSWORD={{ secrets.postgres_password }}
+          LDAP_ADMIN_PASSWORD={{ secrets.ldap_admin_password }}
+          KEYCLOAK_ADMIN_PASSWORD={{ secrets.keycloak_admin_password }}
+          KEYCLOAK_MANAGEMENT_PASSWORD={{ secrets.keycloak_management_password }}
+          TAK_DATABASE_PASSWORD={{ secrets.tak_database_password }}
+          SERVER_DOMAIN={{ server_domain }}
+          CFSSL_CA_NAME={{ cfssl_ca_name }}
+          MW_LE_EMAIL={{ mw_le_email }}
+          MW_LE_TEST={{ mw_le_test }}
+          TAKSERVER_CERT_PASS={{ secrets.takserver_cert_pass }}
+          TAK_CA_PASS={{ secrets.tak_ca_pass }}
+        force: yes
+      become: yes
+      notify: restart docker-compose
+
+    - name: Ensure correct ownership and permissions for .env file
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/docker-rasenmaeher-integration/.env"
+        owner: "{{ ansible_user }}"
+        group: docker
+        mode: '0640'
+      become: yes
+
+
     - name: Deploy RM | Start Docker Compose in detached mode
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_name: rmdev
         project_src: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
         files:
           - docker-compose-local.yml
           - docker-compose-dev.yml
         state: present
-        pull: yes  # Pulls images before starting if set to yes
-        restarted: yes  # Ensures containers are always restarted
-        environment:
-          KEYCLOAK_DATABASE_PASSWORD: "{{ secrets.keycloak_database_password }}"
-          RM_DATABASE_PASSWORD: "{{ secrets.rm_database_password }}"
-          POSTGRES_PASSWORD: "{{ secrets.postgres_password }}"
-          LDAP_ADMIN_PASSWORD: "{{ secrets.ldap_admin_password }}"
-          KEYCLOAK_ADMIN_PASSWORD: "{{ secrets.keycloak_admin_password }}"
-          KEYCLOAK_MANAGEMENT_PASSWORD: "{{ secrets.keycloak_management_password }}"
-          TAK_DATABASE_PASSWORD: "{{ secrets.tak_database_password }}"
-          SERVER_DOMAIN: "{{ server_domain }}"
-          CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
-          MW_LE_EMAIL: "{{ mw_le_email }}"
-          MW_LE_TEST: "{{ mw_le_test }}"
-          TAKSERVER_CERT_PASS: "{{ secrets.takserver_cert_pass }}"
-          TAK_CA_PASS: "{{ secrets.tak_ca_pass }}"
-      become: no
+        pull: never 
+        recreate: always
+      become: yes
       register: compose_background
-      ignore_errors: true
-
 
     - name: Delay before health check
       ansible.builtin.pause:
