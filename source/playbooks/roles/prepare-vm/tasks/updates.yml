@@ -20,6 +20,18 @@
     - python3-pip
     - python3-setuptools
     - iptables
+
+- name: Prepare VM | Basic config | Installing essential PIP packages
+  become: yes
+  pip:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+    state: latest
+  with_items:
+    - docker
+
+
 #- name: Instances | Basic config | Enable unattended upgrades
 #  become: yes
 #  copy:

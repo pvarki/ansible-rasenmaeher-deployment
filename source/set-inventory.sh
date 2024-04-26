@@ -28,6 +28,7 @@ echo ""
 
 echo "Installing ansible-galaxy roles..."
 ansible-galaxy install -r requirements.yml
+ansible-galaxy collection install community.docker
 
 if [ "$OPENVPN_WANTED" == "yes" ]; then
     echo "Openvpn wanted, installing role from Ansible Galaxy..."
@@ -59,7 +60,48 @@ mkdir -p "$HOST_VARS_DIR" "$GROUP_VARS_DIR" "$TARGET_HOST_VARS_DIR"
 DEPLOYMENT_SOURCE="${DEPLOYMENT_SOURCE:-local}"  # default to local if not set
 DOCKER_COMPOSE_PATH="${PWD}/docker-rasenmaeher-integration"  # Adjust the path as necessary
 
-# Write environment variables to a host_vars file
+# Declare an associative array for secrets
+secrets_file="$TARGET_HOST_VARS_DIR/rasenmaeher_secrets.yml"
+declare -A secrets=(
+    ["keycloak_database_password"]="$KEYCLOAK_DATABASE_PASSWORD"
+    ["rm_database_password"]="$RM_DATABASE_PASSWORD"
+    ["tak_database_password"]="$TAK_DATABASE_PASSWORD"
+    ["postgres_password"]="$POSTGRES_PASSWORD"
+    ["ldap_admin_password"]="$LDAP_ADMIN_PASSWORD"
+    ["keycloak_admin_password"]="$KEYCLOAK_ADMIN_PASSWORD"
+    ["keycloak_management_password"]="$KEYCLOAK_MANAGEMENT_PASSWORD"
+    ["takserver_cert_pass"]="$TAKSERVER_CERT_PASS"
+    ["tak_ca_pass"]="$TAK_CA_PASS"
+)
+
+# Begin the secrets array in the YAML file
+echo "secrets:" > "$secrets_file"
+echo "  {" >> "$secrets_file"
+
+# Counter and total for comma handling
+total=${#secrets[@]}
+counter=1
+
+# Manage secrets from env 
+for key in "${!secrets[@]}"; do
+    # Generate a new secret if it's not set in the .env
+    if [ -z "${secrets[$key]}" ]; then
+        secrets[$key]=$(openssl rand -hex 8)  # Using openssl to generate a random hex string
+    fi
+    # Check if this is the last key to avoid trailing comma
+    if [[ $counter -eq $total ]]; then
+        echo "  ${key}: \"${secrets[$key]}\"" >> "$secrets_file"
+    else
+        echo "  ${key}: \"${secrets[$key]}\"," >> "$secrets_file"
+    fi
+    ((counter++))
+done
+
+# Close the curly brace for the secrets dictionary
+echo "  }" >> "$secrets_file"
+
+
+# Write other environment variables to a host_vars file
 cat > "$HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml" <<EOF
 ---
 ansible_ssh_private_key_file: "${TARGET_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE:-''}"

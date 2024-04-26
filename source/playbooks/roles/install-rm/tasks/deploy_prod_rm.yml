@@ -13,19 +13,19 @@
     - name: Debug environment variable values
       ansible.builtin.debug:
         msg: |
-          KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
-          RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
-          POSTGRES_PASSWORD: "{{ postgres_password }}"
-          LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
-          KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
-          KEYCLOAK_MANAGEMENT_PASSWORD: "{{ keycloak_management_password }}"
-          TAK_DATABASE_PASSWORD: "{{ tak_database_password }}"
+          KEYCLOAK_DATABASE_PASSWORD: "{{ secrets.keycloak_database_password }}"
+          RM_DATABASE_PASSWORD: "{{ secrets.rm_database_password }}"
+          POSTGRES_PASSWORD: "{{ secrets.postgres_password }}"
+          LDAP_ADMIN_PASSWORD: "{{ secrets.ldap_admin_password }}"
+          KEYCLOAK_ADMIN_PASSWORD: "{{ secrets.keycloak_admin_password }}"
+          KEYCLOAK_MANAGEMENT_PASSWORD: "{{ secrets.keycloak_management_password }}"
+          TAK_DATABASE_PASSWORD: "{{ secrets.tak_database_password }}"
           SERVER_DOMAIN: "{{ server_domain }}"
           CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
           MW_LE_EMAIL: "{{ mw_le_email }}"
           MW_LE_TEST: "{{ mw_le_test }}"
-          TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
-          TAK_CA_PASS: "{{ tak_ca_pass }}"
+          TAKSERVER_CERT_PASS: "{{ secrets.takserver_cert_pass }}"
+          TAK_CA_PASS: "{{ secrets.tak_ca_pass }}"
 
     - name: Deploy RM | Build Docker Compose project when local and log output
       when: build_locally == 'true' and docker_images_check.stdout != ''
@@ -34,19 +34,19 @@
            docker-compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml build > /home/{{ ansible_user }}/compose_output.log 2>&1
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
-        KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
-        RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
-        POSTGRES_PASSWORD: "{{ postgres_password }}"
-        LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
-        KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
-        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ keycloak_management_password }}"
-        TAK_DATABASE_PASSWORD: "{{ tak_database_password }}"
+        KEYCLOAK_DATABASE_PASSWORD: "{{ secrets.keycloak_database_password }}"
+        RM_DATABASE_PASSWORD: "{{ secrets.rm_database_password }}"
+        POSTGRES_PASSWORD: "{{ secrets.postgres_password }}"
+        LDAP_ADMIN_PASSWORD: "{{ secrets.ldap_admin_password }}"
+        KEYCLOAK_ADMIN_PASSWORD: "{{ secrets.keycloak_admin_password }}"
+        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ secrets.keycloak_management_password }}"
+        TAK_DATABASE_PASSWORD: "{{ secrets.tak_database_password }}"
         SERVER_DOMAIN: "{{ server_domain }}"
         CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
         MW_LE_EMAIL: "{{ mw_le_email }}"
         MW_LE_TEST: "{{ mw_le_test }}"
-        TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
-        TAK_CA_PASS: "{{ tak_ca_pass }}"
+        TAKSERVER_CERT_PASS: "{{ secrets.takserver_cert_pass }}"
+        TAK_CA_PASS: "{{ secrets.tak_ca_pass }}"
       timeout: 900
       become: yes
       register: build_job
@@ -66,19 +66,19 @@
           docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
-        KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
-        RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
-        POSTGRES_PASSWORD: "{{ postgres_password }}"
-        LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
-        KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
-        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ keycloak_management_password }}"
-        TAK_DATABASE_PASSWORD: "{{ tak_database_password }}"
+        KEYCLOAK_DATABASE_PASSWORD: "{{ secrets.keycloak_database_password }}"
+        RM_DATABASE_PASSWORD: "{{ secrets.rm_database_password }}"
+        POSTGRES_PASSWORD: "{{ secrets.postgres_password }}"
+        LDAP_ADMIN_PASSWORD: "{{ secrets.ldap_admin_password }}"
+        KEYCLOAK_ADMIN_PASSWORD: "{{ secrets.keycloak_admin_password }}"
+        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ secrets.keycloak_management_password }}"
+        TAK_DATABASE_PASSWORD: "{{ secrets.tak_database_password }}"
         SERVER_DOMAIN: "{{ server_domain }}"
         CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
         MW_LE_EMAIL: "{{ mw_le_email }}"
         MW_LE_TEST: "{{ mw_le_test }}"
-        TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
-        TAK_CA_PASS: "{{ tak_ca_pass }}"
+        TAKSERVER_CERT_PASS: "{{ secrets.takserver_cert_pass }}"
+        TAK_CA_PASS: "{{ secrets.tak_ca_pass }}"
       become: no
       timeout: 1500
       register: compose_background
@@ -101,19 +101,19 @@
           docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml pull > /home/{{ ansible_user }}/compose_output.log 2>&1
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
-        KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
-        RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
-        POSTGRES_PASSWORD: "{{ postgres_password }}"
-        LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
-        KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
-        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ keycloak_management_password }}"
-        TAK_DATABASE_PASSWORD: "{{ tak_database_password }}"
+        KEYCLOAK_DATABASE_PASSWORD: "{{ secrets.keycloak_database_password }}"
+        RM_DATABASE_PASSWORD: "{{ secrets.rm_database_password }}"
+        POSTGRES_PASSWORD: "{{ secrets.postgres_password }}"
+        LDAP_ADMIN_PASSWORD: "{{ secrets.ldap_admin_password }}"
+        KEYCLOAK_ADMIN_PASSWORD: "{{ secrets.keycloak_admin_password }}"
+        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ secrets.keycloak_management_password }}"
+        TAK_DATABASE_PASSWORD: "{{ secrets.tak_database_password }}"
         SERVER_DOMAIN: "{{ server_domain }}"
         CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
         MW_LE_EMAIL: "{{ mw_le_email }}"
         MW_LE_TEST: "{{ mw_le_test }}"
-        TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
-        TAK_CA_PASS: "{{ tak_ca_pass }}"
+        TAKSERVER_CERT_PASS: "{{ secrets.takserver_cert_pass }}"
+        TAK_CA_PASS: "{{ secrets.tak_ca_pass }}"
       become: false
       ignore_errors: true
 
@@ -123,19 +123,19 @@
           docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml up -d > /home/{{ ansible_user }}/compose_output.log 2>&1
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       environment:
-        KEYCLOAK_DATABASE_PASSWORD: "{{ keycloak_database_password }}"
-        RM_DATABASE_PASSWORD: "{{ rm_database_password }}"
-        POSTGRES_PASSWORD: "{{ postgres_password }}"
-        LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
-        KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
-        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ keycloak_management_password }}"
-        TAK_DATABASE_PASSWORD: "{{ tak_database_password }}"
+        KEYCLOAK_DATABASE_PASSWORD: "{{ secrets.keycloak_database_password }}"
+        RM_DATABASE_PASSWORD: "{{ secrets.rm_database_password }}"
+        POSTGRES_PASSWORD: "{{ secrets.postgres_password }}"
+        LDAP_ADMIN_PASSWORD: "{{ secrets.ldap_admin_password }}"
+        KEYCLOAK_ADMIN_PASSWORD: "{{ secrets.keycloak_admin_password }}"
+        KEYCLOAK_MANAGEMENT_PASSWORD: "{{ secrets.keycloak_management_password }}"
+        TAK_DATABASE_PASSWORD: "{{ secrets.tak_database_password }}"
         SERVER_DOMAIN: "{{ server_domain }}"
         CFSSL_CA_NAME: "{{ cfssl_ca_name }}"
         MW_LE_EMAIL: "{{ mw_le_email }}"
         MW_LE_TEST: "{{ mw_le_test }}"
-        TAKSERVER_CERT_PASS: "{{ takserver_cert_pass }}"
-        TAK_CA_PASS: "{{ tak_ca_pass }}"
+        TAKSERVER_CERT_PASS: "{{ secrets.takserver_cert_pass }}"
+        TAK_CA_PASS: "{{ secrets.tak_ca_pass }}"
       become: no
       timeout: 1500
       register: compose_background
