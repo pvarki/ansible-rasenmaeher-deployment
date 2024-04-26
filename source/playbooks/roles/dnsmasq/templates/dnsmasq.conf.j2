@@ -10,18 +10,18 @@ server=1.1.1.1
 #dns-configuration
 #resolved names at /etc/hosts
 expand-hosts
-domain={{ server_address }}
+domain={{ server_domain }}
 interface=tun0
 listen-address=127.0.0.1, 10.9.0.0, 10.9.8.1
 
 #resolved names
-address=/tak.{{ server_address }}/10.9.0.1
-address=/mtls.tak.{{ server_address }}/10.9.0.1
-address=/mtls.{{ server_address }}/10.9.0.1
-address=/fake.{{ server_address }}/10.9.0.1
-address=/mtls.fake.{{ server_address }}/10.9.0.1
-address=/{{ server_address }}/10.9.0.1
-address=/fake.{{ server_address }}/10.9.0.1
+address=/tak.{{ server_domain }}/{{ server_ip }}
+address=/mtls.tak.{{ server_domain }}/{{ server_ip }}
+address=/mtls.{{ server_domain }}/{{ server_ip }}
+address=/fake.{{ server_domain }}/{{ server_ip }}
+address=/mtls.fake.{{ server_domain }}/{{ server_ip }}
+address=/{{ server_domain }}/{{ server_ip }}
+address=/fake.{{ server_domain }}/{{ server_ip }}
 
 #logs
 log-facility=/var/log/dnsmasq.log

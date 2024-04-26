@@ -128,6 +128,7 @@ mw_le_email: "${MW_LE_EMAIL:-'example@example.com'}"
 mw_le_test: "${MW_LE_TEST:-'true'}"
 openvpn_wanted: "${OPENVPN_WANTED:-'false'}"
 openvpn_custom_dns: "${OPENVPN_CUSTOM_DNS}"
+server_ip: "${SERVER_IP:-127.0.0.1}"
 EOF
 
 # Conditionally add dy.fi DDNS vars if ddns deploy is true

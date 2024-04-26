@@ -1,0 +1,13 @@
+127.0.0.1   localhost
+127.0.0.1   {{ server_domain }}
+::1         localhost ip6-localhost ip6-loopback
+ff02::1     ipv6-allnodes
+ff02::2     ip6-allrouters
+
+# services in this machine
+{{ server_ip }}   mtls.tak.{{ server_domain }}
+{{ server_ip }}   tak.{{ server_domain }}
+{{ server_ip }}   fake.{{ server_domain }}
+{{ server_ip }}   mtls.fake.{{ server_domain }}
+{{ server_ip }}   {{ server_domain }}
+{{ server_ip }}   mtls.{{ server_domain }}
