@@ -76,26 +76,26 @@
 
     - name: Check and manage container health
       block:
-    - name: Check container health status
-      ansible.builtin.shell:
-        cmd: docker ps --filter "health=unhealthy" --format "{{ '{{.Names}}' }}"
-      register: unhealthy_containers
-      until: unhealthy_containers.stdout_lines == []
-      retries: 10
-      delay: 30
-      ignore_errors: true
+      - name: Check container health status
+        ansible.builtin.shell:
+          cmd: docker ps --filter "health=unhealthy" --format "{{ '{{.Names}}' }}"
+        register: unhealthy_containers
+        until: unhealthy_containers.stdout_lines == []
+        retries: 10
+        delay: 30
+        ignore_errors: true
 
-    - name: Restart unhealthy containers
-      ansible.builtin.shell:
-        cmd: docker restart {{ item }}
-      loop: "{{ unhealthy_containers.stdout_lines }}"
-      when: unhealthy_containers.stdout_lines | length > 0
-      register: restart_status
+      - name: Restart unhealthy containers
+        ansible.builtin.shell:
+          cmd: docker restart {{ item }}
+        loop: "{{ unhealthy_containers.stdout_lines }}"
+        when: unhealthy_containers.stdout_lines | length > 0
+        register: restart_status
 
-    - name: Debug restart status
-      ansible.builtin.debug:
-        var: restart_status
-      when: restart_status is defined
+      - name: Debug restart status
+        ansible.builtin.debug:
+          var: restart_status
+        when: restart_status is defined
 
     - name: Deploy RM | Fetch log
       ansible.builtin.shell:
