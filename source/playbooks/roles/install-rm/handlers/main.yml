@@ -3,3 +3,7 @@
     community.docker.docker_compose:
       project_src: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       state: restarted
+
+  - name: Reload firewalld
+    ansible.builtin.command:
+      cmd: sudo firewall-cmd --reload

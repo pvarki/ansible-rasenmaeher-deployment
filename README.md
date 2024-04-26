@@ -10,6 +10,12 @@ Define your variables: addresses and secrets, to an .env. Template provided. Run
 2. $ bash set-inventory.sh - create a staging host to /inventory/staging & load up .env
 3. Run ansible-playbook site.yml -vv - to deploy & manage your Miniwerk Rasenmaeher inventory.
 
+# Manage Your RM Deplyoment
+1. ```ansible-playbook manage_rm.yml -vv -e "add_admin=true"``` to add single-use admincode to RM.
+2. ```ansible-playbook manage_rm.yml -vv -e "remove_composition=true"``` to nuke containers, images and volumes to start from scratch.
+3. ```ansible-playbook manage_rm.yml -vv -e "pull_new=true"``` to grab new images (TODO).
+
+
 # Useful Commands
 ```
 ansible-vault decrypt inventory//host_vars/which-host-you-want-to-decrypt.yml --vault-password-file ./vault_pass.txt
