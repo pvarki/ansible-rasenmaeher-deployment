@@ -1,0 +1,35 @@
+- name: Remove RM | Stop and remove RM at target
+  when: remove_composition == 'true'
+  block:
+    - name: Remove RM | List all containers
+      community.docker.docker_host_info:
+        containers: yes
+      register: docker_containers
+
+    - name: Remove RM | top all containers
+      community.docker.docker_container:
+        name: "{{ item.Id }}"
+        state: absent
+      loop: "{{ docker_containers.containers }}"
+      ignore_errors: true  # Continue if some containers are already stopped
+
+    - name: Remove RM | Remove all containers
+      community.docker.docker_container:
+        name: "{{ item.Id }}"
+        state: absent
+        force_kill: yes  # Force kill if containers are not stopping
+      loop: "{{ docker_containers.containers }}"
+      when: docker_containers.containers is defined
+
+    - name: Remove RM | List all volumes
+      community.docker.docker_volume_info:
+      register: docker_volumes
+
+    - name: Remove RM | Remove all volumes
+      community.docker.docker_volume:
+        name: "{{ item.Name }}"
+        state: absent
+        force: yes  # Force the removal of the volume, even if it's in use
+      loop: "{{ docker_volumes.volumes }}"
+      when: docker_volumes.volumes is defined
+      ignore_errors: true  # In case some volumes are attached and can't be removed

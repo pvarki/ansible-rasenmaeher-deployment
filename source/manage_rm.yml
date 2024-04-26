@@ -1,0 +1,20 @@
+---
+- name: Manage RM Deployment
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: Remove a RM deployment
+      include_role:
+        name: remove-rm
+      when: remove_composition | bool
+
+    - name: Add new admin login code to RM
+      include_role:
+        name: rm-add-admin
+      when: add_admin | bool
+
+    - name: Pull new version and redeploy RM
+      include_role:
+        name: rm-pull-new-version
+      when: pull_new | bool

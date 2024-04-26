@@ -1,0 +1,13 @@
+- name: RM Add Admin | Execute get new admin code command
+  ansible.builtin.shell:
+    cmd: >
+      docker exec -it rmdev-rmapi-1 /bin/bash -c "source ./venv/bin/activate && rasenmaeher_api addcode"
+    chdir: /home/ansibleuser/docker-rasenmaeher-integration
+  become: yes
+  register: exec_output
+  ignore_errors: true
+
+- name: RM Add Admin | Get output from Docker exec
+  ansible.builtin.debug:
+    msg: "{{ exec_output.stdout }}"
+
