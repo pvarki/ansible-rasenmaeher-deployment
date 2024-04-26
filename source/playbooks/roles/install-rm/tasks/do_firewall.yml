@@ -30,4 +30,4 @@
     - "4439/tcp"
     - "80/tcp"
     - "4625-4626/tcp"
-  notify: reload firewalld
+  notify: reload_firewalld
