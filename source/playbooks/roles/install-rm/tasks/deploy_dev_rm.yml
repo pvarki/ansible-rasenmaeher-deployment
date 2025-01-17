@@ -64,7 +64,7 @@
           - docker-compose-local.yml
           - docker-compose-dev.yml
         state: present
-        pull: never 
+        pull: never
         recreate: always
       become: yes
       ignore_errors: true
@@ -155,7 +155,7 @@
           - docker-compose-local.yml
           - docker-compose-dev.yml
         state: present
-        pull: never 
+        pull: never
         recreate: always
       become: yes
       register: compose_background

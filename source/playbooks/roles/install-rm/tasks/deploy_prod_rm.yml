@@ -79,7 +79,7 @@
         files:
           - docker-compose.yml
         state: present
-        pull: never 
+        pull: never
         recreate: always
       become: yes
       register: compose_background
@@ -154,14 +154,14 @@
         files:
           - docker-compose.yml
         state: present
-        pull: never 
+        pull: never
         recreate: always
       become: yes
       register: compose_background
 
     - name: Delay before health check
       ansible.builtin.pause:
-        seconds: 30 
+        seconds: 30
 
     - name: Check and manage container health
       block:
@@ -170,7 +170,7 @@
             cmd: docker ps --filter "health=unhealthy" --format "{{ '{{.Names}}' }}"
           register: unhealthy_containers
           until: unhealthy_containers.stdout_lines == []
-          retries: 10 
+          retries: 10
           delay: 30
           ignore_errors: true
 

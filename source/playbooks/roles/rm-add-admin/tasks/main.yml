@@ -10,4 +10,3 @@
 - name: RM Add Admin | Get output from Docker exec
   ansible.builtin.debug:
     msg: "{{ exec_output.stdout }}"
-

@@ -82,7 +82,7 @@ echo "  {" >> "$secrets_file"
 total=${#secrets[@]}
 counter=1
 
-# Manage secrets from env 
+# Manage secrets from env
 for key in "${!secrets[@]}"; do
     # Generate a new secret if it's not set in the .env
     if [ -z "${secrets[$key]}" ]; then
@@ -123,6 +123,7 @@ docker_repo_tag: "${DOCKER_REPO_TAG:-'main'}"
 docker_composition_repo: "${DOCKER_COMPOSITION_REPO:-https://github.com/pvarki/docker-rasenmaeher-integration.git}"
 build_locally: "${BUILD_LOCALLY:-'false'}"
 server_domain: "${SERVER_DOMAIN:-'localmaeher.pvarki.fi'}"
+additional_subdomain: "${ADDITIONAL_SUBDOMAIN}"
 cfssl_ca_name: "${CFSSL_CA_NAME:-'localmaeher'}"
 mw_le_email: "${MW_LE_EMAIL:-'example@example.com'}"
 mw_le_test: "${MW_LE_TEST:-'true'}"
