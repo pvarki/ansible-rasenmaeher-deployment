@@ -121,6 +121,7 @@ mw_le_test: "${MW_LE_TEST:-'true'}"
 openvpn_wanted: "${OPENVPN_WANTED:-'false'}"
 openvpn_custom_dns: "${OPENVPN_CUSTOM_DNS}"
 server_ip: "${SERVER_IP:-127.0.0.1}"
+vite_asset_set: "${VITE_ASSET_SET:-''}"
 EOF
 
 echo "Finished writing YAML file: $HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml"

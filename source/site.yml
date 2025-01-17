@@ -3,10 +3,10 @@
 #ansible-playbook site.yml  -vv
 
 ### Playbook to configure control node
-# - import_playbook: playbooks/0_prepare_controlnode.yml
+- import_playbook: playbooks/0_prepare_controlnode.yml
 
 ### Playbook to configure target VM
-# - import_playbook: playbooks/1_configure_vm.yml
+- import_playbook: playbooks/1_configure_vm.yml
 
 ### Playbook to deploy Miniwerk-RM
 - import_playbook: playbooks/2_install_rasenmaeher.yml

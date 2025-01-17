@@ -112,7 +112,7 @@
     - name: Deploy RM | Pull Docker Compose images
       ansible.builtin.shell:
         cmd: |
-          docker compose -f /home/{{ ansible_user }}/docker-rasenmaeher-integration/docker-compose.yml pull > /home/{{ ansible_user }}/compose_output.log 2>&1
+          docker compose pull
         chdir: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       become: false
       ignore_errors: true
@@ -159,6 +159,12 @@
         recreate: always
       become: yes
       register: compose_background
+
+    - name: Display Docker Compose output
+      ansible.builtin.debug:
+        msg:
+          - "Docker Compose stdout: {{ compose_background.stdout_lines | default([]) }}"
+          - "Docker Compose stderr: {{ compose_background.stderr_lines | default([]) }}"
 
     - name: Delay before health check
       ansible.builtin.pause:
