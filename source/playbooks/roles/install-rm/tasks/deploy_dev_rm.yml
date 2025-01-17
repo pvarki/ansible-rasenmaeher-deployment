@@ -107,7 +107,7 @@
         msg: "{{ log_output.stdout_lines }}"
 
 - name: Deploy RM | Deploy Docker Compose from remote repository
-  when: build_locally == 'false'
+  when: not build_locally | default(false) | bool
   block:
     - name: Deploy RM | Pull Docker Compose images
       ansible.builtin.shell:

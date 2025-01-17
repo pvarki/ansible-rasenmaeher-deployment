@@ -23,7 +23,7 @@ echo "| | | || |\  |/\__/ / _| |_ | |_/ /| |____| |___                          
 echo "\_| |_/\_| \_/\____/  \___/ \____/ \_____/\____/                              "
 echo "                                                                              "
 echo "                                                                             "
-echo "Version: 24 April 2024"
+echo "Version: 17 Jan 2025"
 echo ""
 
 echo "Installing ansible-galaxy roles..."
@@ -62,44 +62,34 @@ DOCKER_COMPOSE_PATH="${PWD}/docker-rasenmaeher-integration"  # Adjust the path a
 
 # Declare an associative array for secrets
 secrets_file="$TARGET_HOST_VARS_DIR/rasenmaeher_secrets.yml"
-declare -A secrets=(
-    ["keycloak_database_password"]="$KEYCLOAK_DATABASE_PASSWORD"
-    ["rm_database_password"]="$RM_DATABASE_PASSWORD"
-    ["tak_database_password"]="$TAK_DATABASE_PASSWORD"
-    ["postgres_password"]="$POSTGRES_PASSWORD"
-    ["ldap_admin_password"]="$LDAP_ADMIN_PASSWORD"
-    ["keycloak_admin_password"]="$KEYCLOAK_ADMIN_PASSWORD"
-    ["keycloak_management_password"]="$KEYCLOAK_MANAGEMENT_PASSWORD"
-    ["takserver_cert_pass"]="$TAKSERVER_CERT_PASS"
-    ["tak_ca_pass"]="$TAK_CA_PASS"
+
+# Start the secrets YAML structure
+echo "secrets:" > "$secrets_file"
+
+# Define the keys and loop through them
+keys=(
+    "keycloak_database_password"
+    "rm_database_password"
+    "tak_database_password"
+    "postgres_password"
+    "ldap_admin_password"
+    "keycloak_admin_password"
+    "keycloak_management_password"
+    "takserver_cert_pass"
+    "tak_ca_pass"
 )
 
-# Begin the secrets array in the YAML file
-echo "secrets:" > "$secrets_file"
-echo "  {" >> "$secrets_file"
-
-# Counter and total for comma handling
-total=${#secrets[@]}
-counter=1
-
-# Manage secrets from env
-for key in "${!secrets[@]}"; do
-    # Generate a new secret if it's not set in the .env
-    if [ -z "${secrets[$key]}" ]; then
-        secrets[$key]=$(openssl rand -hex 8)  # Using openssl to generate a random hex string
+for key in "${keys[@]}"; do
+    value=$(eval echo \$$key)  # Dynamically fetch the value from environment variables
+    # Generate a new secret if it's not set
+    if [ -z "$value" ]; then
+        value=$(openssl rand -hex 8)
     fi
-    # Check if this is the last key to avoid trailing comma
-    if [[ $counter -eq $total ]]; then
-        echo "  ${key}: \"${secrets[$key]}\"" >> "$secrets_file"
-    else
-        echo "  ${key}: \"${secrets[$key]}\"," >> "$secrets_file"
-    fi
-    ((counter++))
+    # Append the key-value pair to the YAML file
+    echo "  $key: \"$value\"" >> "$secrets_file"
 done
 
-# Close the curly brace for the secrets dictionary
-echo "  }" >> "$secrets_file"
-
+echo "Generated secrets file."
 
 # Write other environment variables to a host_vars file
 cat > "$HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml" <<EOF
@@ -219,8 +209,19 @@ if [ ! -z "$ANSIBLE_VAULT_PASSWORD" ]; then
         echo "Failed to encrypt vars. Check the vault setup."
         exit 1
     fi
-    # Update ansible.cfg to use the vault password file
-    cat > ansible.cfg <<EOF
+    echo "$ANSIBLE_VAULT_PASSWORD" > vault_pass.txt
+    chmod 600 vault_pass.txt
+    VAULT_ID="default"
+    ansible-vault encrypt "$HOST_VARS_DIR/$TARGET_HOSTNAME/rasenmaeher_secrets.yml" --vault-password-file vault_pass.txt --encrypt-vault-id $VAULT_ID
+    if [ $? -eq 0 ]; then
+        echo "Encrypted vars for rasenmaeher secrets using Ansible Vault with vault-id $VAULT_ID."
+    else
+        echo "Failed to encrypt vars. Check the vault setup."
+        exit 1
+    fi
+
+# Update ansible.cfg to use the vault password file
+cat > ansible.cfg <<EOF
 [defaults]
 inventory = ./inventory/hosts.yml
 vault_password_file = ./vault_pass.txt

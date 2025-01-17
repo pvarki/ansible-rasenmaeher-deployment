@@ -7,3 +7,7 @@
   - name: reload:firewalld
     ansible.builtin.command:
       cmd: sudo firewall-cmd --reload
+
+  - name: reload_firewalld
+    ansible.builtin.command:
+      cmd: sudo firewall-cmd --reload

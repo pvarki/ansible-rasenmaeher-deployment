@@ -14,6 +14,10 @@
   include_tasks: deploy_dev_rm.yml
   when: deploy_in_dev | default(false) | bool
 
+- name: Deploy RM in Dev mode
+  include_tasks: deploy_dev_rm.yml
+  when: deployment_source | default('remote') == 'remote'
+
 - name: Deploy RM in Production mode
   include_tasks: deploy_prod_rm.yml
   when: not deploy_in_dev | default(false) | bool
