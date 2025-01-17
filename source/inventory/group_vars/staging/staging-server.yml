@@ -1,1 +1,8 @@
 ---
+dns_wanted: "false"
+dns_zone_name: "pvarki.fi"
+dns_record_name: "{{ TARGET_HOSTNAME }}.{{ DNS_ZONE_NAME }}"
+dns_provider_url: "https://api.mydnsprovider.com/v1"
+dns_api_token: "yourdnsapitoken"
+windows_server_dns: "false"
+deployment_name: "takserver.lan"

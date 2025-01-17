@@ -1,6 +1,6 @@
 
   - name: restart docker-compose
-    community.docker.docker_compose:
+    community.docker.docker_compose_v2:
       project_src: "/home/{{ ansible_user }}/docker-rasenmaeher-integration"
       state: restarted
 
