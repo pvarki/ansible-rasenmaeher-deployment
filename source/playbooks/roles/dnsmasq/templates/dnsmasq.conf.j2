@@ -12,7 +12,7 @@ server=1.1.1.1
 expand-hosts
 domain={{ server_domain }}
 interface=tun0
-listen-address=127.0.0.1, 10.9.0.0, 10.9.8.1
+listen-address=127.0.0.1, {{ server_ip }}
 
 #resolved names
 address=/tak.{{ server_domain }}/{{ server_ip }}
@@ -22,6 +22,8 @@ address=/fake.{{ server_domain }}/{{ server_ip }}
 address=/mtls.fake.{{ server_domain }}/{{ server_ip }}
 address=/{{ server_domain }}/{{ server_ip }}
 address=/fake.{{ server_domain }}/{{ server_ip }}
+address=/kc.{{ server_domain }}/{{ server_ip }}
+address=/{{ additional_subdomain }}.{{ server_domain }}/{{ server_ip }}
 
 #logs
 log-facility=/var/log/dnsmasq.log
