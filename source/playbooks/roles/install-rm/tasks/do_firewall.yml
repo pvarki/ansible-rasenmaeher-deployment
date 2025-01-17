@@ -31,3 +31,10 @@
     - "80/tcp"
     - "4625-4626/tcp"
   notify: reload_firewalld
+
+- name: Deploy RM | Ensure firewalld is running
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: true
+  become: true
