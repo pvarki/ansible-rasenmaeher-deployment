@@ -11,7 +11,7 @@ server=1.1.1.1
 #resolved names at /etc/hosts
 expand-hosts
 domain={{ server_domain }}
-interface=tun0
+interface={{ server_network_interface }}
 listen-address=127.0.0.1, {{ server_ip }}
 
 #resolved names

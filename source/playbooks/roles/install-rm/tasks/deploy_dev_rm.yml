@@ -39,6 +39,7 @@
           KEYCLOAK_MANAGEMENT_PASSWORD={{ secrets.keycloak_management_password }}
           TAK_DATABASE_PASSWORD={{ secrets.tak_database_password }}
           SERVER_DOMAIN={{ server_domain }}
+          VITE_ASSET_SET={{ vite_asset_set }}
           CFSSL_CA_NAME={{ cfssl_ca_name }}
           MW_LE_EMAIL={{ mw_le_email }}
           MW_LE_TEST={{ mw_le_test }}
@@ -132,6 +133,7 @@
           CFSSL_CA_NAME={{ cfssl_ca_name }}
           MW_LE_EMAIL={{ mw_le_email }}
           MW_LE_TEST={{ mw_le_test }}
+          VITE_ASSET_SET={{ vite_asset_set }}
           TAKSERVER_CERT_PASS={{ secrets.takserver_cert_pass }}
           TAK_CA_PASS={{ secrets.tak_ca_pass }}
         force: yes
