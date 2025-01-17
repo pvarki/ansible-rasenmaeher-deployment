@@ -2,6 +2,9 @@
 ## Run using the below command:
 #ansible-playbook site.yml  -vv
 
+### Playbook to configure control node
+- import_playbook: playbooks/0_prepare_controlnode.yml
+
 ### Playbook to configure target VM
 - import_playbook: playbooks/1_configure_vm.yml
 

@@ -1,6 +1,5 @@
 - name: Control Node Playbook | Prepare control node
-  gather_facts: yes
   hosts: localhost
 
   roles:
-    - load-env
+    - prepare-control-node

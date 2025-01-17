@@ -2,4 +2,4 @@
 - name: Push target Ansible user to the target, at first contact
   delegate_to: localhost
   shell: |
-    ssh-copy-id -i {{ ansibleuser_ssh_public_key_file }} {{ target_initial_user }}@{{ target_address }}
+    ssh-copy-id -i {{ ansible_ssh_public_key_file }} {{ target_ansible_user }}@{{ target_address }}

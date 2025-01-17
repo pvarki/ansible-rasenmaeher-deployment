@@ -8,8 +8,8 @@ ANSIBLE_VAULT_PASSWORD=myvaultpassword # pragma: allowlist secret
 # Credentials
 TARGET_ANSIBLEUSER=ansibleuser # pragma: allowlist secret
 TARGET_ANSIBLEPASS=youransiblepassword # pragma: allowlist secret
-TARGET_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE=$HOME/.ssh/id_rsa
-TARGET_ANSIBLEUSER_SSH_PUBLIC_KEY_FILE=$HOME/.ssh/id_rsa.pub
+TARGET_ANSIBLE_SSH_PRIVATE_KEY_FILE=$HOME/.ssh/id_rsa
+TARGET_ANSIBLE_SSH_PUBLIC_KEY_FILE=$HOME/.ssh/id_rsa.pub
 
 # Target settings
 ENVIRONMENT_STAGE=staging # If this is 'production', the playbook will use the production settings

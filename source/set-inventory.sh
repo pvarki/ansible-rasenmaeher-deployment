@@ -104,7 +104,8 @@ echo "  }" >> "$secrets_file"
 # Write other environment variables to a host_vars file
 cat > "$HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml" <<EOF
 ---
-ansible_ssh_private_key_file: "${TARGET_ANSIBLEUSER_SSH_PRIVATE_KEY_FILE:-''}"
+ansible_ssh_private_key_file: "${TARGET_ANSIBLE_SSH_PRIVATE_KEY_FILE:-''}"
+ansible_ssh_public_key_file: "${TARGET_ANSIBLE_SSH_PRIVATE_KEY_FILE:-''}.pub"
 ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 ansible_become: true
 ansible_become_method: sudo
@@ -132,6 +133,9 @@ openvpn_custom_dns: "${OPENVPN_CUSTOM_DNS}"
 server_ip: "${SERVER_IP:-127.0.0.1}"
 EOF
 
+echo "Finished writing YAML file: $HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml"
+cat "$HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml"
+
 # Conditionally add dy.fi DDNS vars if ddns deploy is true
 if [ "${USE_DDNS:-false}" = "true" ]; then
     cat >> "$HOST_VARS_DIR/$TARGET_HOSTNAME/$TARGET_HOSTNAME.yml" <<EOF
@@ -145,10 +149,16 @@ fi
 cat > "$HOST_VARS_DIR/localhost.yml" <<EOF
 ---
 ansible_user: "${LOCALHOST_USER:-'user'}"
+target_ansible_user: "${TARGET_ANSIBLEUSER:-'ansibleuser'}"
 ansible_become_password: "${LOCALHOST_BECOME_PASSWORD:-'password'}"
 ansible_become: true
 ansible_become_method: sudo
+ansible_ssh_private_key_file: "${TARGET_ANSIBLE_SSH_PRIVATE_KEY_FILE:-''}"
+ansible_ssh_public_key_file: "${TARGET_ANSIBLE_SSH_PRIVATE_KEY_FILE:-''}.pub"
 local_user: "${LOCALHOST_USER:-'user'}"
+server_domain: "${SERVER_DOMAIN:-'localmaeher.pvarki.fi'}"
+additional_subdomain: "${ADDITIONAL_SUBDOMAIN}"
+target_address: "${TARGET_ANSIBLE_HOST:-''}"
 EOF
 
 # Create host_vars file for the DNS server

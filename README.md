@@ -18,7 +18,7 @@ Define your variables: addresses and secrets, to an .env. Template provided. Run
 
 # Useful Commands
 ```
-ansible-vault decrypt inventory//host_vars/which-host-you-want-to-decrypt.yml --vault-password-file ./vault_pass.txt
+ansible-vault decrypt inventory/host_vars/staging-server/which-host-you-want-to-decrypt.yml --vault-password-file ./vault_pass.txt
 ```
 Decrypt a host yml to see address, credentials etc.
 

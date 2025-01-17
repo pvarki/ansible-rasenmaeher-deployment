@@ -21,14 +21,11 @@
     - python3-setuptools
     - iptables
 
-- name: Prepare VM | Basic config | Installing essential PIP packages
+- name: Prepare VM | Basic config | Install Docker Python library via apt
   become: yes
-  pip:
-    name: "{{ item }}"
+  apt:
+    name: python3-docker
     state: latest
-  with_items:
-    - docker
-
 
 #- name: Instances | Basic config | Enable unattended upgrades
 #  become: yes
